@@ -24,17 +24,18 @@ function linkDB()
     return $db_con;
 //$db_con->close();
 }
-
+/*
 // Verbindung zur Datenbank aufbauen
 try {
     //"mysql:(MYSQL_DB);host=(MYSQL_HOST)"
     $db = new PDO("mysql:dbname=" . MYSQL_DB . ";host=" . MYSQL_HOST . ";charset=utf8", MYSQL_BENUTZER, MYSQL_KENNWORT);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Verbindung ueber PDO hergestellt.";
+    //echo "Verbindung ueber PDO hergestellt.";
 } catch (PDOException $e) {
     //echo "Fehler: " . htmlspecialchars($e->getMessage());
     exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
 }
+*/
 
 
 ?>

@@ -23,7 +23,12 @@ include "Kalender.php";
 <body>
 <main>
     <?php
+
+    //\\ Verbindung zur Datenbank herstellen
     //linkDBpdo();
+    $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+
+    //\\ Kalender aufbauen und anzeigen
     $monat = (int)date('m');
     $jahr = (int)date('Y');
     if (isset($_GET['m'])) {
@@ -40,7 +45,7 @@ include "Kalender.php";
             $jahr = $jahr+1;
         }
     }
-    $kalender = new Kalender($monat, $jahr);
+    $kalender = new Kalender($db, $monat, $jahr);
     $kalender->show();
     ?>
 
