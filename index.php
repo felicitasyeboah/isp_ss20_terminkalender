@@ -49,6 +49,8 @@ include "Kalender.php";
     $kalender->show();
     ?>
 
+<input type="submit" name="addTermin" value="Termin hinzufügen" />
+
 
 </main>
 </body>
