@@ -49,6 +49,33 @@ include "Kalender.php";
     $kalender->show();
     ?>
 
+    <script>
+
+      const verzeichnis = "";
+      const kalender = verzeichnis + "index.php";
+      const XHR = new XMLHttpRequest();
+
+      // Event
+      function zeigeEvent(id) {
+
+        XHR.open("GET", kalender +
+        "?event&id=" + id, true);
+        XHR.send(null);
+        XHR.onreadystatechange = ausgabe;
+    }
+
+    // Ausgabe
+    function ausgabe() {
+
+      if (XHR.readyState == 4 && XHR.status == 200) {
+
+        document.getElementById("event").appendChild(document.createElement("td")).setAttribute("id", "anzeige");
+        document.getElementById("anzeige").setAttribute("colspan", "10");
+
+      }
+    }
+    </script>
+
 <input type="submit" name="addTermin" value="Termin hinzufügen" />
 
 

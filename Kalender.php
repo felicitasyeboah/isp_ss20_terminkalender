@@ -70,6 +70,7 @@ class Kalender
               $ausgabe .= '<div class="event"';
               $ausgabe .= 'id="' . $event['id'] . '"';
               $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
+              $ausgabe .= '" onClick="zeigeEvent(' . $event['id'] . ')" ';
               $ausgabe .= '>' . $event['titel'] . '</div>';
             }
 
@@ -88,6 +89,9 @@ class Kalender
             $restlicheTage = 7 - $this->tagDerWoche;
             $ausgabe .= '<td colspan="' . $restlicheTage . '"</td>';
         }
+
+        $ausgabe .= '<tbody id="event"></tbody>';
+
         $ausgabe .= '</tr></table>';
 
         echo $ausgabe;
