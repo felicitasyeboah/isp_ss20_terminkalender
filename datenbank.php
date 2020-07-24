@@ -1,5 +1,6 @@
 <?php
 
+include "termin.php";
 
 class Datenbank
 {
@@ -26,13 +27,14 @@ class Datenbank
     {
       $events = [];
 
-      $select = $this->db->prepare("SELECT `id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `kategorie`, `ort`
-                                      FROM `kalender`
+      $select = $this->db->prepare("SELECT `id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `kategorieid`, `ort`
+                                      FROM `termine`
                                       WHERE (YEAR(`anfang`) = :jahr AND MONTH(`anfang`) = :monat AND DAY(`anfang`) = :tag)
                                       ORDER BY `anfang` ASC");
 
       if ($select->execute([':jahr' => $jahr, ':monat' => $monat, ':tag' => $tag])) {
-        $events = $select->fetchAll();
+        $events = $select->fetchAll(PDO::FETCH_CLASS, 'Termin');
+        //$events = $select->fetchAll();
       }
 
       return $events;
