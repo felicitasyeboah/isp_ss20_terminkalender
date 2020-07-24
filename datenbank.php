@@ -44,6 +44,8 @@ class Datenbank
 
     public function getKategorie($katid)
     {
+      $kategorie = NULL;
+
       $select = $this->db->prepare("SELECT *
                                     FROM `kategorie`
                                     WHERE `id` = :katid");
@@ -52,7 +54,7 @@ class Datenbank
         $kategorie = $select->fetchObject('Kategorie');
       }
 
-      return $kategorie;
+      return ($kategorie) ? $kategorie : NULL;
 
     } // Ende Funktion getKategorie()
 

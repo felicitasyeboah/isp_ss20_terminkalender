@@ -16,7 +16,7 @@ class Termin
 
     public function __construct() {
         //\\ holen des Kategorie-Datensatzes für diesen Termin
-        $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
+        if(isset($this->kategorieid)) $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
     }
     public function __set($name, $value) {}
     public function __get($name) {return $this->$name;}
@@ -24,10 +24,10 @@ class Termin
     //\\ gibt den Termin in HTML-Ansicht zurück
     public function toHTML(): string {
         $html  = '<div class="event"';
-        $html .= ' style="border-left: Solid 12px #'. $this->kategorie->farbe . '"';
+        if(isset($this->kategorie)) $html .= ' style="border-left: Solid 12px #'. $this->kategorie->farbe . '"';
         $html .= 'id="' . $this->id . '"';
         $html .= 'title="' . $this->beschreibung . '&#013;' . $this->ort . '"';
-        $html .= '" onClick="zeigeEvent(' . $this->id . ')" ';
+        $html .= ' onClick="zeigeEvent(' . $this->id . ')" ';
         $html .= '>' . $this->titel . '</div>';
 
         return $html;
