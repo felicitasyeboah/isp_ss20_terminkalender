@@ -19,12 +19,12 @@ span.nr {
 }
 
 .event {
-  border-left: Solid 12px #9DDF20;
+  border-left: Solid 12px #F0F0F0;
   font-size: 0.80rem;
   margin-top: 2px;
   padding: 2px 0 1px 2px;
   cursor: Pointer;
-  box-shadow: 1px 1px 1px 0px #AAAAAA, inset 0px 0px 10px 100px rgb(240,240,240);
+  box-shadow: 1px 1px 1px 0px #AAAAAA, inset 0px 0px 10px 100px #F0F0F0;
   color: #2284E6 !important;
   border-radius: 3px;
 }
