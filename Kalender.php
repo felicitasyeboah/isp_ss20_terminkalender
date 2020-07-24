@@ -11,9 +11,7 @@ class Kalender
     private $infoDatum;
     private $tagDerWoche;
 
-    private $db;
-
-    public function __construct($db, $monat, $jahr, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
+    public function __construct($monat, $jahr, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
     {
         $this->monat = $monat;
         $this->jahr = $jahr;
@@ -22,8 +20,6 @@ class Kalender
         $this->infoDatum = getdate(mktime(0, 0, 0, $monat, 1, $jahr));
         //minus 1 damit unser Kalender mit Montag beginnt und nicht mit Sonntag
         $this->tagDerWoche = $this->infoDatum['wday'] - 1;
-
-        $this->db = $db;
     }
 
     public function show()
@@ -64,7 +60,7 @@ class Kalender
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
-            $events = $this->db->getEventsonDay($this->jahr, $this->monat, $tagCounter);
+            $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             foreach ($events as &$event) {
               $ausgabe .= $event->toHTML();
             }

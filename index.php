@@ -24,7 +24,7 @@ include "Kalender.php";
 <main>
     <?php
 
-    //\\ Verbindung zur Datenbank herstellen
+    //\\ Verbindung zur Datenbank herstellen (-> globaler Zugriff über $GLOBALS["db"])
     //linkDBpdo();
     $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
@@ -45,7 +45,7 @@ include "Kalender.php";
             $jahr = $jahr+1;
         }
     }
-    $kalender = new Kalender($db, $monat, $jahr);
+    $kalender = new Kalender($monat, $jahr);
     $kalender->show();
     ?>
 

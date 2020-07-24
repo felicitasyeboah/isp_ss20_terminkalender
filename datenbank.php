@@ -1,6 +1,7 @@
 <?php
 
 include "termin.php";
+include "kategorie.php";
 
 class Datenbank
 {
@@ -40,6 +41,20 @@ class Datenbank
       return $events;
 
     } // Ende Funktion getEventsonDay()
+
+    public function getKategorie($katid)
+    {
+      $select = $this->db->prepare("SELECT *
+                                    FROM `kategorie`
+                                    WHERE `id` = :katid");
+
+      if ($select->execute([':katid' => $katid])) {
+        $kategorie = $select->fetchObject('Kategorie');
+      }
+
+      return $kategorie;
+
+    } // Ende Funktion getKategorie()
 
     public function getEventsforCategory($category)
     {
