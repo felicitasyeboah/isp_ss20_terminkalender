@@ -2,97 +2,168 @@
 
 include "Datenbank.php";
 
+/**
+ * Class Termin
+ *
+ */
 class Termin
 {
-    private $monat;
-    private $jahr;
-    private $tageDerWoche;
-    private $anzahlTage;
-    private $infoDatum;
-    private $tagDerWoche;
+    private $start;
+    private $ende;
+    private $ganztaegig;
+    private $titel;
+    private $beschreibung;
+    private $ort;
+    private $kategorie;
+    private $farbe;
 
-    private $db;
 
-    public function __construct($db, $monat, $jahr, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
+    public function __construct($start, $ende, $titel, $beschreibung, $ort, $ganztaegig = '0', $kategorie = '0', $farbe = '0')
     {
-        $this->monat = $monat;
-        $this->jahr = $jahr;
-        $this->tageDerWoche = $tageDerWoche;
-        $this->anzahlTage = cal_days_in_month(CAL_GREGORIAN, $this->monat, $this->jahr);
-        $this->infoDatum = getdate(mktime(0, 0, 0, $monat, 1, $jahr));
-        //minus 1 damit unser Kalender mit Montag beginnt und nicht mit Sonntag
-        $this->tagDerWoche = $this->infoDatum['wday'] - 1;
+        $this->start = $start;
+        $this->ende = $ende;
+        $this->titel = $titel;
+        $this->beschreibung = $beschreibung;
+        $this->ort = $ort;
+        $this->gantaegig = $ganztaegig;
+        $this->kategorie = $kategorie;
+        $this->farbe = $farbe;
 
-        $this->db = $db;
     }
 
-    public function show()
+    /**
+     * @return mixed
+     */
+    public function getStart()
     {
-        $ausgabe = '<table>';
-        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat-1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat+1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
+        return $this->start;
+    }
 
-        $ausgabe .= '<thead><tr>';
-        foreach ($this->tageDerWoche as $tag) {
-            $ausgabe .= '<th>' . $tag . '</th>';
-        }
-        $ausgabe .= '</thead></tr>';
+    /**
+     * @param mixed $start
+     */
+    public function setStart($start)
+    {
+        $this->start = $start;
+    }
 
-        $ausgabe .= '<tr>';
+    /**
+     * @return mixed
+     */
+    public function getEnde()
+    {
+        return $this->ende;
+    }
 
-        // Weil unser Kalender am Montag und nicht am Sonntag beginnt
-        if($this->tagDerWoche == -1) {
-            $this->tagDerWoche = 0;
-        }
-        // Wenn der erste Tag des Monats nicht auf einen Montag faellt
-        // Ersten Tage des Kalenders auffuellen
-        if ($this->tagDerWoche > 0) {
-            $ausgabe .= '<td colspan="' . $this->tagDerWoche . '"</td>';
-        }
-        //Tag-Counter
-        $tagCounter = 1;
+    /**
+     * @param mixed $ende
+     */
+    public function setEnde($ende)
+    {
+        $this->ende = $ende;
+    }
 
+    /**
+     * @return string
+     */
+    public function getGanztaegig(): string
+    {
+        return $this->ganztaegig;
+    }
 
-        while ($tagCounter <= $this->anzahlTage) {
+    /**
+     * @param string $ganztaegig
+     */
+    public function setGanztaegig(string $ganztaegig)
+    {
+        $this->ganztaegig = $ganztaegig;
+    }
 
-            //Zuruecksetzen vom tagDerWoche Counter
-            if ($this->tagDerWoche == 7) {
-                $this->tagDerWoche = 0;
-                $ausgabe .= '</tr><tr>';
-            }
+    /**
+     * @return mixed
+     */
+    public function getTitel()
+    {
+        return $this->titel;
+    }
 
-            //\\ TODO: Klassenvergabe dynamisieren bzw. mittels Konstante für diese Klasse
-            $ausgabe .= '<td><span class="nr">' . $tagCounter;
+    /**
+     * @param mixed $titel
+     */
+    public function setTitel($titel)
+    {
+        $this->titel = $titel;
+    }
 
-            //\\ Events anzeigen
-            $events = $this->db->getEventsonDay($this->jahr, $this->monat, $tagCounter);
-            foreach ($events as &$event) {
-              //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
-              $ausgabe .= '<div class="event"';
-              $ausgabe .= 'id="' . $event['id'] . '"';
-              $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
-              $ausgabe .= '>' . $event['titel'] . '</div>';
-            }
+    /**
+     * @return mixed
+     */
+    public function getBeschreibung()
+    {
+        return $this->beschreibung;
+    }
 
-            unset($event); // Entferne die Referenz auf das letzte Element
+    /**
+     * @param mixed $beschreibung
+     */
+    public function setBeschreibung($beschreibung)
+    {
+        $this->beschreibung = $beschreibung;
+    }
 
-            $ausgabe .= '</span></td>';
+    /**
+     * @return mixed
+     */
+    public function getOrt()
+    {
+        return $this->ort;
+    }
 
-            //counter hochzaehlen
-            $tagCounter++;
-            $this->tagDerWoche++;
-        } // Ende While
+    /**
+     * @param mixed $ort
+     */
+    public function setOrt($ort)
+    {
+        $this->ort = $ort;
+    }
 
-        //resliche Tage im Kalender am Ende auffuellen, wenn der letzte Tag
-        //des Monats nicht auf das Ende des Kalenders faellt
-        if ($this->tagDerWoche != 7) {
-            $restlicheTage = 7 - $this->tagDerWoche;
-            $ausgabe .= '<td colspan="' . $restlicheTage . '"</td>';
-        }
-        $ausgabe .= '</tr></table>';
+    /**
+     * @return string
+     */
+    public function getKategorie(): string
+    {
+        return $this->kategorie;
+    }
 
-        echo $ausgabe;
+    /**
+     * @param string $kategorie
+     */
+    public function setKategorie(string $kategorie)
+    {
+        $this->kategorie = $kategorie;
+    }
 
-    } // Ende Funktion show()
+    /**
+     * @return string
+     */
+    public function getFarbe(): string
+    {
+        return $this->farbe;
+    }
+
+    /**
+     * @param string $farbe
+     */
+    public function setFarbe(string $farbe)
+    {
+        $this->farbe = $farbe;
+    }
+
+    public function printEvent()
+    {
+     ;
+    }
+
 }
 
 ?>

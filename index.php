@@ -25,7 +25,13 @@ include "Kalender.php";
     <?php
 
     //\\ Verbindung zur Datenbank herstellen
-    //linkDBpdo();
+    // TODO $db ist global und war bisher ein PDO Objekt und nicht Objekt der Klasse Datenbank, $db->exec() in z.b.
+    // TODO createTable.php lässt sich jetzt nicht mehr auf $db aufrufen, da exec() eine Methode von PDO ist.
+    // TODO Sollten überlegen, ob die KLasse Datenbank überhaupt nötig ist oder ob wir nicht die Funktionen der Klasse
+    // TODO Datenbank in die Klasse Kalender packen. Kalender verwaltet Termine bzw. Kalender ist ja eigentlich unsere Datenbank.
+    // TODO Habe vorerst in createTable ein neues Datenbank-Objekt erzeugt und die Datenbankverbindung mit getDb() zurueckgebenlassen.
+    // TODO
+
     $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
     //\\ Kalender aufbauen und anzeigen
@@ -78,6 +84,34 @@ include "Kalender.php";
 
 <input type="submit" name="addTermin" value="Termin hinzufügen" />
 
+
+    <form id="kalender" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <label>Titel:<br/><input size="100px" type="text" name="titel"><br><br></label>
+        <label for="beschreibung">Beschreibung des Termins <br/>
+            <textarea id="beschreibung" name=" beschreibung" rows="10" cols="30"></textarea>
+        </label>
+        <label>Anfang:<br/><input size="50px" type="text" name="anfang"><br><br></label>
+        <label>Ende:<br/><input size="50px" type="text" name="ende"><br><br></label>
+        <label>ganztaegig:<br/><input size="50px" type="checkbox" name="ganztaegig"><br><br></label>
+
+        <label>Kategorie:<br/></label>
+        <label><input type="radio" name="genre" value="0">privat<br/></label>
+        <label><input type="radio" name="genre" value="1">schule<br/></label>
+        <label><input type="radio" name="genre" value="2">uni<br/></label>
+        <label><input type="radio" name="genre" value="3">arbeit<br/></label>
+        <label><input type="radio" name="genre" value="4">hobby<br/><br/></label>
+
+        <label>Farbe:<br/></label>
+        <label><input type="radio" name="status" value="1">rot</label>
+        <label><input type="radio" name="status" value="2">gelb</label>
+        <label><input type="radio" name="status" value="3">gruen</label>
+        <br/>
+        <br/>
+
+        <button type="reset" name="resetbutton" value="Formular zur&uuml;cksetzen">Formular zur&uuml;cksetzen</button>
+        <button type="submit" name="eintragAbschickenButton" value="absenden">Absenden</button>
+    </form>
+    <p>&nbsp;</p>
 
 </main>
 </body>

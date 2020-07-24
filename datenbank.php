@@ -16,7 +16,9 @@ class Datenbank
         exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
     }
   }
-
+    public function getDb() {
+      return $this->db;
+    }
     public function getAllEvents()
     {
       //\\ Implementierung wenn benötigt!

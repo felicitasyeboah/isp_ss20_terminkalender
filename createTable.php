@@ -1,6 +1,8 @@
 <?php
 include "DB_Conf.php";
-
+include "datenbank.php";
+$dbTmp = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+$db = $dbTmp->getDb();
 //Tabelle "termin" anlegen, wenn sie noch nicht existiert
 try {
     $createTable = "CREATE TABLE IF NOT EXISTS `termine` ( 
