@@ -1,6 +1,9 @@
 <?php
 include "DB_Conf.php";
 
+$dbinst = new PDO("mysql:dbname=" . MYSQL_DB . ";host=" . MYSQL_HOST . ";charset=utf8", MYSQL_BENUTZER, MYSQL_KENNWORT);
+$dbinst->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 //Tabelle "termin" anlegen, wenn sie noch nicht existiert
 try {
     $createTable = "CREATE TABLE IF NOT EXISTS `termine` ( 
@@ -13,11 +16,11 @@ try {
         `ort` VARCHAR(65) NOT NULL , 
         `kategorieid` INT NOT NULL , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
-    if($db->exec($createTable)) {
+    if($dbinst->exec($createTable)) {
         echo "Tabelle angelegt.";
     }
     $sql = "INSERT INTO `termine` (`id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES (NULL, '2020-07-15 07:00:00', '2020-07-15 09:00:00', '0', 'Zweiter Testtermin', 'Das ist der zweite Testtermin, der über die php-funktion eingetragen wurde', 'da wo ich wohne', '1');";
-    if($db->exec($sql)) {
+    if($dbinst->exec($sql)) {
         echo "TestTermin erfolgreich eingetragen.";
     }
 } catch (PDOException $e) {
@@ -33,11 +36,11 @@ try {
         `name` VARCHAR(65) NOT NULL , 
         `farbe` CHAR(6) NOT NULL , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
-    if($db->exec($createTable)) {
+    if($dbinst->exec($createTable)) {
         echo "Tabelle angelegt.";
     }
     $sql = "INSERT INTO `kategorie` (`id`, `name`, `farbe`) VALUES (NULL, 'privat', '9DDF20');";
-    if($db->exec($sql)) {
+    if($dbinst->exec($sql)) {
         echo "TestTermin erfolgreich eingetragen.";
     }
 } catch (PDOException $e) {
