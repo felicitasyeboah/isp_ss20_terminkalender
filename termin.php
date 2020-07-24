@@ -2,20 +2,22 @@
 
 class Termin
 {
-    public $id;
-    public $titel;
-    public $anfang;
-    public $ende;
-    public $ganztag;
-    public $beschreibung;
-    public $ort;
-    public $kategorieid;
-
+    private $id;
+    private $titel;
+    private $anfang;
+    private $ende;
+    private $ganztag;
+    private $beschreibung;
+    private $ort;
+    private $kategorieid;
 
     public function __construct()
     {
 
     }
+
+    public function __set($name, $value) {}
+    public function __get($name) {return $this->$name;}
 }
 
 ?>
