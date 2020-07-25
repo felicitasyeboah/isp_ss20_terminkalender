@@ -12,19 +12,19 @@
         <label for="ganztag">ganztaegig:<br/><input size="50px" type="checkbox" name="ganztag" value="1"><br><br></label>
 
         <label>Kategorie:<br/>
-            <select name="kategorie" size="1">
-                <option value="1">privat</option>
+            <input type="text" name="kategorie" list="kategorieName"/>
+
+            <datalist id="kategorieName">
+                <option value="1">Privat</option>
                 <option value="2">Uni</option>
                 <option value="3">Arbeit</option>
                 <option value="4">Hobby</option>
                 <option value="5">Kat 5</option>
                 <option value="6">Kat 6</option>
                 <option value="7">Kat 7</option>
-
-
-            </select>
+                <option value="8">Kat 8</option>
+            </datalist>
         </label>
-
         <br/>
         <br/>
         <input type="color" id="farbe" name="farbe"
@@ -37,14 +37,24 @@
         <button type="submit" name="eintragAbschickenButton" value="absenden">Absenden</button>
     </form>
     <p>&nbsp;</p>
+    <a href="index.php">Zurueck zu Startseite</a>
 
     <?php
     require_once "index.php";
     @$subButton = $_POST['eintragAbschickenButton'];
 
+    //$titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0')
     if (isset($subButton)) {
         $termin = new Termin();
-        $termin->terminErstellen($_POST['titel'], $_POST['beschreibung'], $_POST['anfang'], $_POST['ende'],  $_POST['ort'], $_POST['ganztag'], $_POST['kategorie'], $_POST['farbe']);
+        if(isset($_POST['ganztag'])) {
+            $termin->setGanztag(1);
+        } else {
+            $termin->setGanztag(0);
+
+        }
+        $termin->terminErstellen($_POST['titel'], $_POST['beschreibung'], $_POST['anfang'], $_POST['ende'],  $_POST['ort'],  $_POST['kategorie'], $_POST['farbe'], $termin->getGanztag());
+        echo "kategorieID: " . $termin->getKategorieid();
+
         $db->addEvent($termin);
         echo '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>';
         //$kalender->show();
