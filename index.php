@@ -84,7 +84,7 @@ include "Kalender.php";
 
 <input type="submit" name="addTermin" value="Termin hinzufügen" />
 
-
+<!--
     <form id="kalender" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <label>Titel:<br/><input size="100px" type="text" name="titel"><br><br></label>
         <label for="beschreibung">Beschreibung des Termins <br/>
@@ -112,7 +112,7 @@ include "Kalender.php";
         <button type="submit" name="eintragAbschickenButton" value="absenden">Absenden</button>
     </form>
     <p>&nbsp;</p>
-
+-->
 </main>
 </body>
 </html>
