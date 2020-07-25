@@ -25,9 +25,10 @@ class Termin
 
     }
     public function __set($name, $value) {}
-    public function __get($name) {return $this->$name;}
+    //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
+    //public function __get($name) {return $this->$name;}
 
-    public function terminErstellen($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $ganztag = '0') {
+    public function terminErstellen($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
         $this->anfang = $anfang;
         $this->ende = $ende;
@@ -35,13 +36,18 @@ class Termin
         $this->beschreibung = $beschreibung;
         $this->ort = $ort;
         $this->ganztag = $ganztag;
+        $this->farbe = $farbe;
         $this->kategorieid = $kategorieid;
+        if(isset($this->kategorieid)) {
+            $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
+            $this->farbe = $farbe;
+        }
         echo "Termin erstellt";
     }
     //\\ gibt den Termin in HTML-Ansicht zurück
     public function toHTML(): string {
         $html  = '<div class="event"';
-        if(isset($this->kategorie)) $html .= ' style="border-left: Solid 12px #'. $this->kategorie->farbe . '"';
+        if(isset($this->kategorie)) $html .= ' style="border-left: Solid 12px '. $this->kategorie->farbe . '"';
         $html .= 'id="' . $this->id . '"';
         $html .= 'title="' . $this->beschreibung . '&#013;' . $this->ort . '"';
         $html .= ' onClick="zeigeEvent(' . $this->id . ')" ';
