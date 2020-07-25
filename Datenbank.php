@@ -34,6 +34,11 @@ class Datenbank
             $kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
             $kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
 
+            if($termin->getKategorieid() <=8) {
+                $sql = "UPDATE `kategorie` SET `farbe` = ? WHERE `id` =  ?"; //SQL Statement
+                $kommando2 = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                $kommando2->execute(array($termin->getFarbe(), $termin->getKategorieid()));
+            }
             echo "Termin wurde in der Datenbank eingetragen.<br/>";
             $this->dbCon = null; // Verbindung zur DB wird geschlossen
         } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
