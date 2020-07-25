@@ -3,12 +3,12 @@
 include "Datenbank.php";
 
 /**
- * Class Termin
+ * Class TerminTest
  *
  */
-class Termin
+class TerminTest
 {
-    private $start;
+    private $anfang;
     private $ende;
     private $ganztaegig;
     private $titel;
@@ -16,11 +16,14 @@ class Termin
     private $ort;
     private $kategorie;
     private $farbe;
+    private $kategorieid;
 
 
-    public function __construct($start, $ende, $titel, $beschreibung, $ort, $ganztaegig = '0', $kategorie = '0', $farbe = '0')
+    public function __construct($titel, $beschreibung, $anfang, $ende, $ort, $ganztaegig = '0', $kategorie = '0', $farbe = '0')
     {
-        $this->start = $start;
+        if(isset($this->kategorieid)) $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
+
+        $this->anfang = $anfang;
         $this->ende = $ende;
         $this->titel = $titel;
         $this->beschreibung = $beschreibung;
@@ -30,7 +33,17 @@ class Termin
         $this->farbe = $farbe;
 
     }
+    //\\ gibt den Termin in HTML-Ansicht zurück
+    public function toHTML(): string {
+        $html  = '<div class="event"';
+        if(isset($this->kategorie)) $html .= ' style="border-left: Solid 12px #'. $this->farbe . '"';
+        $html .= 'id="' . $this->id . '"';
+        $html .= 'title="' . $this->beschreibung . '&#013;' . $this->ort . '"';
+        $html .= ' onClick="zeigeEvent(' . $this->id . ')" ';
+        $html .= '>' . $this->titel . '</div>';
 
+        return $html;
+    }
     /**
      * @return mixed
      */

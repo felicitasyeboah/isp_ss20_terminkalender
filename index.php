@@ -4,7 +4,7 @@ TODO Autoren: Christian Till - Matrikelnr. 238872  und Felicitas Yeboah - Matrik
 TODO Abgabedatum  02.08.2020
 -->
 <?php
-require_once("DB_Conf.php");
+require_once("dbConf.php");
 include "Kalender.php";
 //include("inc/header.inc.php");
 //require_once("createTable.php");
@@ -84,35 +84,6 @@ include "Kalender.php";
 
 <input type="submit" name="addTermin" value="Termin hinzufügen" />
 
-<!--
-    <form id="kalender" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <label>Titel:<br/><input size="100px" type="text" name="titel"><br><br></label>
-        <label for="beschreibung">Beschreibung des Termins <br/>
-            <textarea id="beschreibung" name=" beschreibung" rows="10" cols="30"></textarea>
-        </label>
-        <label>Anfang:<br/><input size="50px" type="text" name="anfang"><br><br></label>
-        <label>Ende:<br/><input size="50px" type="text" name="ende"><br><br></label>
-        <label>ganztaegig:<br/><input size="50px" type="checkbox" name="ganztaegig"><br><br></label>
-
-        <label>Kategorie:<br/></label>
-        <label><input type="radio" name="genre" value="0">privat<br/></label>
-        <label><input type="radio" name="genre" value="1">schule<br/></label>
-        <label><input type="radio" name="genre" value="2">uni<br/></label>
-        <label><input type="radio" name="genre" value="3">arbeit<br/></label>
-        <label><input type="radio" name="genre" value="4">hobby<br/><br/></label>
-
-        <label>Farbe:<br/></label>
-        <label><input type="radio" name="status" value="1">rot</label>
-        <label><input type="radio" name="status" value="2">gelb</label>
-        <label><input type="radio" name="status" value="3">gruen</label>
-        <br/>
-        <br/>
-
-        <button type="reset" name="resetbutton" value="Formular zur&uuml;cksetzen">Formular zur&uuml;cksetzen</button>
-        <button type="submit" name="eintragAbschickenButton" value="absenden">Absenden</button>
-    </form>
-    <p>&nbsp;</p>
--->
 </main>
 </body>
 </html>
