@@ -83,7 +83,7 @@ include "Kalender.php";
     </script>
 
 <input type="submit" name="addTermin" value="Termin hinzufügen" />
-
+<a href="terminAdd.php">Termin hinzufuegen</a>
 </main>
 </body>
 </html>
