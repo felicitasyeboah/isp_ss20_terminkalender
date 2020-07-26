@@ -37,10 +37,16 @@ class Datenbank
             $kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
             $kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
 
-            if ($termin->getKategorieid() <= 8) {
+            if (($termin->getKategorieid() <= 8) && ($termin->getKategorieid() > 0)) {
                 $sql = "UPDATE `kategorie` SET `farbe` = ? WHERE `id` =  ?"; //SQL Statement
                 $kommando2 = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
                 $kommando2->execute(array($termin->getFarbe(), $termin->getKategorieid()));
+            }
+            else {
+                $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES(?,?)"; //SQL Statement
+                $kommando3 = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                $kommando3->execute(array($termin->getKategorieid(), $termin->getFarbe()));
+                //$termin->setKategorie($termin->getKategorie());
             }
             echo "Termin wurde in der Datenbank eingetragen.<br/>";
             $this->dbCon = null; // Verbindung zur DB wird geschlossen
@@ -94,14 +100,28 @@ class Datenbank
 
     } // Ende Funktion getEventsforCategory()
 
+    /**
+     * Lädt alle Kategorien ins Dropdownmenue der Termineitnragen Seite
+     */
     public function getAllKategorien() {
 
         $sql = "SELECT * FROM `kategorie`";
         $ergebnis = $this->dbCon->query($sql);
         foreach($ergebnis as $zeile) {
-            echo "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
+            echo "<option value=" . htmlspecialchars($zeile["name"]). ">" . htmlspecialchars($zeile["id"]) . "</option>";
 
         }
+    }
+    public function getColor($kategorieid){
+      $sql = "SELECT farbe FROM kategorie WHERE id = :id";
+      $kommando = $this->dbCon->prepare($sql);
+
+      $kommando->bindParam(":id", $kategorieid);
+      $kommando->execute();
+      while($zeile = $kommando->fetch(PDO::FETCH_OBJ)) {
+          $ergebnis = $zeile->farbe;
+      }
+      return $ergebnis;
     }
 }
 
