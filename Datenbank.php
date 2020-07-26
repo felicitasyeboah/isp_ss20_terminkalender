@@ -30,7 +30,6 @@ class Datenbank
      */
     public function addEvent(Termin $termin)
     {
-        //TODO Bsher werden nur vorgegeben Kategorien eingetragen
         try {
             //$db_con = self::linkDB(); // die mit der function linkDB() aufgebaute Verbindung zur DB wird in $db_con gespeichtert
             $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES (?, ?, ?, ?, ?, ?, ?)"; //SQL Statement

@@ -12,8 +12,12 @@ $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
         </label>
         <br>
         <br>
-        <label>Anfang:<br/><input size="50px" type="text" name="anfang"><br><br></label>
-        <label>Ende:<br/><input size="50px" type="text" name="ende"><br><br></label>
+        <label>Anfangsdatum:<br/><input size="50px" type="date" name="anfangsdatum"><br><br></label>
+
+        <label>Anfangszeit:<br/><input size="50px" type="time" name="anfangszeit"><br><br></label>
+        <label>Enddatum:<br/><input size="50px" type="date" name="enddatum"><br><br></label>
+
+        <label>Endzeit:<br/><input size="50px" type="time" name="endzeit"><br><br></label>
         <label>Ort:<br/><input size="100px" type="text" name="ort"><br><br></label>
 
         <label for="ganztag">ganztaegig:<br/><input size="50px" type="checkbox" name="ganztag"
@@ -67,7 +71,12 @@ if (isset($subButton)) {
         $tmpGanztag = 0;
 
     }
-    $termin = new Termin($_POST['titel'], $_POST['beschreibung'], $_POST['anfang'], $_POST['ende'], $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+
+    $anfang = $_POST['anfangsdatum'] . " " .$_POST['anfangszeit'] . ":00";
+    echo $anfang;
+    $ende = $_POST['enddatum'] . " " .$_POST['endzeit'] . ":00";
+    echo $ende;
+    $termin = new Termin($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
     //$termin->terminErstellen($_POST['titel'], $_POST['beschreibung'], $_POST['anfang'], $_POST['ende'],  $_POST['ort'],  $_POST['kategorie'], $_POST['farbe'], $termin->getGanztag());
     echo "kategorieID: " . $termin->getKategorieid();
