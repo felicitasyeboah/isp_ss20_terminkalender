@@ -10,7 +10,6 @@ class Kalender
     private $anzahlTage;
     private $infoDatum;
     private $tagDerWoche;
-    private $db;
 
     public function __construct($db, $monat, $jahr, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
     {
@@ -21,10 +20,8 @@ class Kalender
         $this->infoDatum = getdate(mktime(0, 0, 0, $monat, 1, $jahr));
         //minus 1 damit unser Kalender mit Montag beginnt und nicht mit Sonntag
         $this->tagDerWoche = $this->infoDatum['wday'] - 1;
-
-        $this->db = $db;
-
     }
+
     /**
      * Baut eine Verbindung zur MYSQL Datenbank auf und gibt diese Verbindung zurück
      * @return PDO
@@ -46,7 +43,8 @@ class Kalender
      * Traegt einen Temrin in den Kalender ein
      * @param Termin $termin
      */
-    public function addEvent(Termin $termin) {
+    public function addEvent(Termin $termin)
+    {
 
         try {
             $db_con = self::linkDB(); // die mit der function linkDB() aufgebaute Verbindung zur DB wird in $db_con gespeichtert
@@ -65,7 +63,7 @@ class Kalender
     public function show()
     {
         $ausgabe = '<table>';
-        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat-1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat+1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
+        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
 
         $ausgabe .= '<thead><tr>';
         foreach ($this->tageDerWoche as $tag) {
@@ -76,7 +74,7 @@ class Kalender
         $ausgabe .= '<tr>';
 
         // Weil unser Kalender am Montag und nicht am Sonntag beginnt
-        if($this->tagDerWoche == -1) {
+        if ($this->tagDerWoche == -1) {
             $this->tagDerWoche = 0;
         }
         // Wenn der erste Tag des Monats nicht auf einen Montag faellt
@@ -100,18 +98,18 @@ class Kalender
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
-            //$events = $this->db->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             foreach ($events as &$event) {
                 //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
-                /*$ausgabe .= '<div class="event"';
+                $ausgabe .= '<div class="event"';
+                if ($event['kategorieid'] > 0) $ausgabe .= ' style="border-left: Solid 12px ' . $event['farbe'] . '"';
+
                 $ausgabe .= 'id="' . $event['id'] . '"';
                 $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
                 $ausgabe .= '" onClick="zeigeEvent(' . $event['id'] . ')" ';
-                $ausgabe .= '>' . $event['titel'] . '</div>';*/
-                $ausgabe .= $event->toHTML();
+                $ausgabe .= '>' . $event['titel'] . '</div>';
+                //$ausgabe .= $event->toHTML();
             }
-
 
             unset($event); // Entferne die Referenz auf das letzte Element
 
