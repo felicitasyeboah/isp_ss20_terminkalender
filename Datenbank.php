@@ -1,7 +1,7 @@
 <?php
 
-include "Termin.php";
-include "kategorie.php";
+require_once "Termin.php";
+require_once "Kategorie.php";
 
 class Datenbank
 {
@@ -93,6 +93,16 @@ class Datenbank
     {
 
     } // Ende Funktion getEventsforCategory()
+
+    public function getAllKategorien() {
+
+        $sql = "SELECT * FROM `kategorie`";
+        $ergebnis = $this->dbCon->query($sql);
+        foreach($ergebnis as $zeile) {
+            echo "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
+
+        }
+    }
 }
 
 ?>

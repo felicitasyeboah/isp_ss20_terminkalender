@@ -1,3 +1,9 @@
+<?php
+require_once "dbConf.php";
+require_once "index.php";
+
+    $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+?>
 <form id="kalender" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
     <label>Titel:<br/><input size="100px" type="text" name="titel"><br><br></label>
     <label for="beschreibung">Beschreibung des Termins <br/>
@@ -15,15 +21,20 @@
         <input type="text" name="kategorie" list="kategorieName"/>
 
         <datalist id="kategorieName">
-            <option value="1">Privat</option>
+            <?php
+            require_once "Datenbank.php";
+            $db->getAllKategorien();
+            /*<option value="1">Privat</option>
             <option value="2">Uni</option>
             <option value="3">Arbeit</option>
             <option value="4">Hobby</option>
             <option value="5">Kat 5</option>
             <option value="6">Kat 6</option>
             <option value="7">Kat 7</option>
-            <option value="8">Kat 8</option>
+            <option value="8">Kat 8</option>*/
+            ?>
         </datalist>
+
     </label>
     <br/>
     <br/>
@@ -40,8 +51,6 @@
 <a href="index.php">Zurueck zu Startseite</a>
 
 <?php
-require_once "index.php";
-require_once "Termin.php";
 @$subButton = $_POST['eintragAbschickenButton'];
 
 if (isset($subButton)) {
