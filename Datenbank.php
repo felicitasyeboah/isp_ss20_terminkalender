@@ -5,28 +5,31 @@ include "kategorie.php";
 
 class Datenbank
 {
-  private $dbCon;
+    private $dbCon;
 
-  public function __construct($db, $host, $user, $pass)
-  {
-    // Verbindung zur Datenbank aufbauen
-    try {
-      $this->dbCon = new PDO("mysql:dbname=" . $db . ";host=" . $host . ";charset=utf8", $user, $pass);
-      $this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      //echo "Verbindung ueber PDO hergestellt.";
-      } catch (PDOException $e) {
-        exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
+    public function __construct($db, $host, $user, $pass)
+    {
+        // Verbindung zur Datenbank aufbauen
+        try {
+            $this->dbCon = new PDO("mysql:dbname=" . $db . ";host=" . $host . ";charset=utf8", $user, $pass);
+            $this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            //echo "Verbindung ueber PDO hergestellt.";
+        } catch (PDOException $e) {
+            exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
+        }
     }
-  }
-    public function getDbCon() {
-      return $this->dbCon;
+
+    public function getDbCon()
+    {
+        return $this->dbCon;
     }
 
     /**
      * Traegt einen Temrin in den Kalender ein
      * @param Termin $termin
      */
-    public function addEvent(Termin $termin) {
+    public function addEvent(Termin $termin)
+    {
         //TODO Bsher werden nur vorgegeben Kategorien eingetragen
         try {
             //$db_con = self::linkDB(); // die mit der function linkDB() aufgebaute Verbindung zur DB wird in $db_con gespeichtert
@@ -34,7 +37,7 @@ class Datenbank
             $kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
             $kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
 
-            if($termin->getKategorieid() <=8) {
+            if ($termin->getKategorieid() <= 8) {
                 $sql = "UPDATE `kategorie` SET `farbe` = ? WHERE `id` =  ?"; //SQL Statement
                 $kommando2 = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
                 $kommando2->execute(array($termin->getFarbe(), $termin->getKategorieid()));
@@ -46,42 +49,43 @@ class Datenbank
             echo "Fehler: " . $e->getMessage();
         }
     }
+
     public function getAllEvents()
     {
-      //\\ Implementierung wenn benötigt!
+        //\\ Implementierung wenn benötigt!
     }
 
     public function getEventsonDay($jahr, $monat, $tag)
     {
-      $events = [];
+        $events = [];
 
-      $select = $this->dbCon->prepare("SELECT `id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `kategorieid`, `ort`
-                                      FROM `termine`
+        $select = $this->dbCon->prepare("SELECT *
+                                      FROM `termine` LEFT JOIN `kategorie` ON termine.kategorieid = kategorie.id
                                       WHERE (YEAR(`anfang`) = :jahr AND MONTH(`anfang`) = :monat AND DAY(`anfang`) = :tag)
                                       ORDER BY `anfang` ASC");
 
-      if ($select->execute([':jahr' => $jahr, ':monat' => $monat, ':tag' => $tag])) {
-        $events = $select->fetchAll(PDO::FETCH_CLASS, 'Termin');
-        //$events = $select->fetchAll();
-      }
+        if ($select->execute([':jahr' => $jahr, ':monat' => $monat, ':tag' => $tag])) {
+            //$events = $select->fetchAll(PDO::FETCH_CLASS, 'Termin');
+            $events = $select->fetchAll();
+        }
 
-      return $events;
+        return $events;
 
     } // Ende Funktion getEventsonDay()
 
     public function getKategorie($katid)
     {
-      $kategorie = NULL;
+        $kategorie = NULL;
 
-      $select = $this->dbCon->prepare("SELECT *
+        $select = $this->dbCon->prepare("SELECT *
                                     FROM `kategorie`
                                     WHERE `id` = :katid");
 
-      if ($select->execute([':katid' => $katid])) {
-        $kategorie = $select->fetchObject('Kategorie');
-      }
+        if ($select->execute([':katid' => $katid])) {
+            $kategorie = $select->fetchObject('Kategorie');
+        }
 
-      return ($kategorie) ? $kategorie : NULL;
+        return ($kategorie) ? $kategorie : NULL;
 
     } // Ende Funktion getKategorie()
 
