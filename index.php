@@ -92,7 +92,7 @@ include "Kalender.php";
                 }
             };
             var validate = "week";
-            xhttp.open("POST", "ajaxShowWeek.php", true);
+            xhttp.open("POST", "ajaxCalView.php", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
             xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
         }
@@ -105,7 +105,7 @@ include "Kalender.php";
             };
             var validate = "day";
 
-            xhttp.open("POST", "ajaxShowWeek.php", true);
+            xhttp.open("POST", "ajaxCalView.php", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
             xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
         }
@@ -117,7 +117,7 @@ include "Kalender.php";
                 }
             };
             var validate = "month";
-            xhttp.open("POST", "ajaxShowWeek.php", true);
+            xhttp.open("POST", "ajaxCalView.php", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
             xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
         }
