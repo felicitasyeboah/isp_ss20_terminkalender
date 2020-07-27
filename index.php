@@ -64,7 +64,7 @@ include "Kalender.php";
     echo '<p></p>';
    //$kalender->showWeek();
     // Laedt Seite addEvent.php -->
-    echo '<input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace("addEvent.php")">';
+    echo '<input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace(\'addEvent.php\')">';
 
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
    /* echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
