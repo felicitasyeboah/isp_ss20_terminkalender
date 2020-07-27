@@ -23,13 +23,16 @@ include "Kalender.php";
 <body>
 <main>
     <?php
-
+    echo '<div id="container">';
     //\\ Verbindung zur Datenbank herstellen
-    $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+    // Wird nun in der Datei Datenbank.php erstellt
+    //$db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
     //\\ Kalender aufbauen und anzeigen
     $monat = (int)date('m');
     $jahr = (int)date('Y');
+    $woche = (int)date('W');
+    echo $woche;
     if (isset($_GET['m'])) {
         $monat = $_GET['m'];
         $jahr = $_GET['j'];
@@ -44,9 +47,81 @@ include "Kalender.php";
             $jahr = $jahr+1;
         }
     }
-    $kalender = new Kalender($db, $monat, $jahr);
-    $kalender->show();
+    $kalender = new Kalender($monat, $jahr, $woche);
+    $kalender->showMonth();
+    // Für Methode ohne Ajax
+    /*if(isset($_POST['wochenansicht'])) {
+        $kalender->showWeek();
+    }
+    elseif(isset($_POST['tagesansicht'])) {
+        $kalender->showDay();
+    }
+    else {
+        $kalender->showMonth();
+
+    }*/
+    echo '</div>';
+    echo '<p></p>';
+   //$kalender->showWeek();
+    // Laedt Seite addEvent.php -->
+    echo '<input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace("addEvent.php")">';
+
+    // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
+   /* echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
+        <input type="submit" name="wochenansicht" value="Wochenansicht">
+    </form>';
+    echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
+        <input type="submit" name="tagesansicht" value="Tagesansicht">
+    </form>';
+    echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
+        <input type="submit" name="monatsansicht" value="Monatsansicht">
+    </form>';*/
+
+    // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode mit Ajax.
+    echo '<input type="button" name="showWeek" value="Wochenansicht" onclick="loadWeek(' . $woche . ', '.$monat .' , '.$jahr .')">';
+    echo '<input type="button" name="showWeek" value="Tagesansicht" onclick="loadDay(' . $woche . ', '.$monat .' , '.$jahr .')">';
+    echo '<input type="button" name="showWeek" value="Monatsansicht" onclick="loadMonth(' . $woche . ', '.$monat .' , '.$jahr .')">';
     ?>
+    <!-- Javascript Funktionen zum laden der einzelnen Ansichten des Kalenders mittels Ajax -->
+    <script>
+        function loadWeek(w, m, j) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("container").innerHTML = this.responseText;
+                }
+            };
+            var validate = "week";
+            xhttp.open("POST", "ajaxShowWeek.php", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
+        }
+        function loadDay(w, m, j) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("container").innerHTML = this.responseText;
+                }
+            };
+            var validate = "day";
+
+            xhttp.open("POST", "ajaxShowWeek.php", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
+        }
+        function loadMonth(w, m, j) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("container").innerHTML = this.responseText;
+                }
+            };
+            var validate = "month";
+            xhttp.open("POST", "ajaxShowWeek.php", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
+        }
+    </script>
 
     <script>
 
@@ -74,8 +149,7 @@ include "Kalender.php";
       }
     }
     </script>
-    <!-- Laedt Seite addEvent.php -->
-    <input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace('addEvent.php')">
+
 
 </main>
 </body>

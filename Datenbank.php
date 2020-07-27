@@ -2,6 +2,9 @@
 
 require_once "Termin.php";
 require_once "Kategorie.php";
+require_once "dbConf.php";
+//Globale Varable für ein Datenbankobjekt.
+$db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
 class Datenbank
 {
@@ -18,7 +21,6 @@ class Datenbank
             exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
         }
     }
-
     public function getDbCon()
     {
         return $this->dbCon;
