@@ -1,7 +1,6 @@
 <?php
-require_once "dbConf.php";
 require_once "Datenbank.php";
-$db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+
 ?>
     <form id="kalender" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <label>Titel:<br/><input size="65px" type="text" name="titel"><br><br></label>
