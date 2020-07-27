@@ -3,6 +3,8 @@ include "dbConf.php";
 
 $dbinst = new PDO("mysql:dbname=" . MYSQL_DB . ";host=" . MYSQL_HOST . ";charset=utf8", MYSQL_BENUTZER, MYSQL_KENNWORT);
 $dbinst->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//TODO: Die Tabellen werden auch angelegt, wenn sie schon exisiteren -> Durch
+//TODO: mehrfaches LAden der createTable.php werden die defaultkategorien immer der bestehenden tabelle hinzugefügt!
 
 //Tabelle "termin" anlegen, wenn sie noch nicht existiert
 try {
@@ -16,11 +18,11 @@ try {
         `ort` VARCHAR(65) NOT NULL , 
         `kategorieid` INT NOT NULL , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
-    if($dbinst->exec($createTable)) {
+    if ($dbinst->exec($createTable)) {
         echo "Tabelle Termine angelegt.";
     }
     $sql = "INSERT INTO `termine` (`id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES (NULL, '2020-07-15 07:00:00', '2020-07-15 09:00:00', '0', 'Zweiter Testtermin', 'Das ist der zweite Testtermin, der über die php-funktion eingetragen wurde', 'da wo ich wohne', '1');";
-    if($dbinst->exec($sql)) {
+    if ($dbinst->exec($sql)) {
         echo "TestTermin erfolgreich eingetragen.";
     }
 } catch (PDOException $e) {
@@ -36,7 +38,7 @@ try {
         `name` VARCHAR(65) NOT NULL , 
         `farbe` CHAR(7) NOT NULL , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
-    if($dbinst->exec($createTable)) {
+    if ($dbinst->exec($createTable)) {
         echo "Tabelle Kategorie angelegt.";
     }
     $sql = "INSERT INTO `kategorie` (`id`, `name`, `farbe`) VALUES (NULL, 'Privat', '#9DDF20');";
@@ -54,8 +56,10 @@ try {
     $sql = "INSERT INTO `kategorie` (`id`, `name`, `farbe`) VALUES (NULL, 'Kat 7', '#0040FF');";
     $dbinst->exec($sql);
     $sql = "INSERT INTO `kategorie` (`id`, `name`, `farbe`) VALUES (NULL, 'Kat 8', '#5F04B4');";
-    if($dbinst->exec($sql)) {
-        echo "<p> Defaultkategorien erfolgreich eingetragen. </p>";
+    if ($dbinst->exec($sql)) {
+        echo "<p> Defaultkategorien erfolgreich eingetragen. </p>
+    <input type=\"button\" name=\"home\" value=\"Zum Kalender\" onclick=\"window.location.replace('index.php')\">
+";
     }
 } catch (PDOException $e) {
     // Nachricht bei Fehler

@@ -15,8 +15,8 @@ class Termin
     private $kategorie;
     private $farbe;
 
-/*    public function __construct() {
-        //TODO auslagern in eine Funktion und Konstruktor benutzen um einen Termin zu erzeugen
+/* neuen Konstruktor zum Erstellen eines Termins verwenden
+public function __construct() {
         //\\ holen des Kategorie-Datensatzes für diesen Termin
         if(isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
@@ -37,10 +37,8 @@ class Termin
         if(isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
             $this->farbe = $farbe;
+            //$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
 
-            ///$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
-
-            //$this->farbe = $farbe;
         }
         echo "Termin erstellt";
     }
@@ -48,22 +46,6 @@ class Termin
     //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
     //public function __get($name) {return $this->$name;}
 
-/*    public function terminErstellen($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
-
-        $this->anfang = $anfang;
-        $this->ende = $ende;
-        $this->titel = $titel;
-        $this->beschreibung = $beschreibung;
-        $this->ort = $ort;
-        $this->ganztag = $ganztag;
-        $this->farbe = $farbe;
-        $this->kategorieid = $kategorieid;
-        if(isset($this->kategorieid)) {
-            $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
-            $this->farbe = $farbe;
-        }
-        echo "Termin erstellt";
-    }*/
     //\\ gibt den Termin in HTML-Ansicht zurück
     public function toHTML(): string {
         $html  = '<div class="event"';

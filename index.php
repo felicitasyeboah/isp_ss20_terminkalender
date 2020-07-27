@@ -25,13 +25,6 @@ include "Kalender.php";
     <?php
 
     //\\ Verbindung zur Datenbank herstellen
-    // TODO $db ist global und war bisher ein PDO Objekt und nicht Objekt der Klasse Datenbank, $db->exec() in z.b.
-    // TODO createTable.php lässt sich jetzt nicht mehr auf $db aufrufen, da exec() eine Methode von PDO ist.
-    // TODO Sollten überlegen, ob die KLasse Datenbank überhaupt nötig ist oder ob wir nicht die Funktionen der Klasse
-    // TODO Datenbank in die Klasse Kalender packen. Kalender verwaltet Termine bzw. Kalender ist ja eigentlich unsere Datenbank.
-    // TODO Habe vorerst in createTable ein neues Datenbank-Objekt erzeugt und die Datenbankverbindung mit getDb() zurueckgebenlassen.
-    // TODO
-
     $db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
     //\\ Kalender aufbauen und anzeigen
@@ -81,9 +74,9 @@ include "Kalender.php";
       }
     }
     </script>
+    <!-- Laedt Seite addEvent.php -->
+    <input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace('addEvent.php')">
 
-<input type="submit" name="addTermin" value="Termin hinzufügen" />
-<a href="terminAdd.php">Termin hinzufuegen</a>
 </main>
 </body>
 </html>

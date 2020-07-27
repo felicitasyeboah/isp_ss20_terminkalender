@@ -100,18 +100,19 @@ class Datenbank
     } // Ende Funktion getEventsforCategory()
 
     /**
-     * Lädt alle Kategorien ins Dropdownmenue der Termineitnragen Seite
+     * Lädt alle Kategorien ins Dropdownmenue der addEvent.php
      */
     public function getAllKategorien() {
 
         $sql = "SELECT * FROM `kategorie`";
         $ergebnis = $this->dbCon->query($sql);
         foreach($ergebnis as $zeile) {
-            echo "<option value=" . htmlspecialchars($zeile["name"]). ">" . htmlspecialchars($zeile["id"]) . "</option>";
+            echo "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
 
         }
     }
-    public function getColor($kategorieid){
+
+    /*public function getColor($kategorieid){
       $sql = "SELECT farbe FROM kategorie WHERE id = :id";
       $kommando = $this->dbCon->prepare($sql);
 
@@ -121,7 +122,7 @@ class Datenbank
           $ergebnis = $zeile->farbe;
       }
       return $ergebnis;
-    }
+    }*/
 }
 
 ?>
