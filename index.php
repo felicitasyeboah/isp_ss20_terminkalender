@@ -4,8 +4,10 @@ TODO Autoren: Christian Till - Matrikelnr. 238872  und Felicitas Yeboah - Matrik
 TODO Abgabedatum  02.08.2020
 -->
 <?php
+
 require_once("dbConf.php");
 include "Kalender.php";
+
 //include("inc/header.inc.php");
 //require_once("createTable.php");
 //include "inc/footer.inc.php";
@@ -34,21 +36,22 @@ include "Kalender.php";
     $woche = (int)date('W');
     echo $woche;
     if (isset($_GET['m'])) {
-        $monat = $_GET['m'];
-        $jahr = $_GET['j'];
-        echo "Jahr: " . $jahr;
-        echo "Monat: " . $monat;
-        if($_GET['m'] == 0) {
-            $monat = 12;
-            $jahr = $jahr-1;
-        }
-        if($_GET['m'] == 13) {
-            $monat = 1;
-            $jahr = $jahr+1;
-        }
+      $monat = $_GET['m'];
+      $jahr = $_GET['j'];
+      echo "Jahr: " . $jahr;
+      echo "Monat: " . $monat;
+      if($_GET['m'] == 0) {
+          $monat = 12;
+          $jahr = $jahr-1;
+      }
+      if($_GET['m'] == 13) {
+          $monat = 1;
+          $jahr = $jahr+1;
+      }
     }
     $kalender = new Kalender($monat, $jahr, $woche);
     $kalender->showMonth();
+
     // Für Methode ohne Ajax
     /*if(isset($_POST['wochenansicht'])) {
         $kalender->showWeek();
@@ -82,6 +85,7 @@ include "Kalender.php";
     echo '<input type="button" name="showWeek" value="Tagesansicht" onclick="loadDay(' . $woche . ', '.$monat .' , '.$jahr .')">';
     echo '<input type="button" name="showWeek" value="Monatsansicht" onclick="loadMonth(' . $woche . ', '.$monat .' , '.$jahr .')">';
     ?>
+
     <!-- Javascript Funktionen zum laden der einzelnen Ansichten des Kalenders mittels Ajax -->
     <script>
         function loadWeek(w, m, j) {
@@ -126,28 +130,31 @@ include "Kalender.php";
     <script>
 
       const verzeichnis = "";
-      const kalender = verzeichnis + "index.php";
+      const kalender = verzeichnis + "Termin.php";
       const XHR = new XMLHttpRequest();
 
       // Event
       function zeigeEvent(id) {
-
         XHR.open("GET", kalender +
-        "?event&id=" + id, true);
+        "?details&id=" + id, true);
         XHR.send(null);
-        XHR.onreadystatechange = ausgabe;
+        XHR.onload = ausgabe;
+        XHR.onerror = function () {
+         console.log('Error: ' + xhr.status); // Ein Fehler ist aufgetreten
+      }
     }
 
     // Ausgabe
     function ausgabe() {
-
+      
       if (XHR.readyState == 4 && XHR.status == 200) {
-
-        document.getElementById("event").appendChild(document.createElement("td")).setAttribute("id", "anzeige");
-        document.getElementById("anzeige").setAttribute("colspan", "10");
+        document.getElementById("event").innerHTML = this.responseText;
+        //document.getElementById("event").appendChild(document.createElement("td")).setAttribute("id", "anzeige");
+        //document.getElementById("anzeige").setAttribute("colspan", "10");
 
       }
     }
+
     </script>
 
 

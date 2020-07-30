@@ -87,14 +87,14 @@ class Kalender
             $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             foreach ($events as &$event) {
                 //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
-                $ausgabe .= '<div class="event"';
+                /*$ausgabe .= '<div class="event"';
                 if ($event['kategorieid'] > 0) $ausgabe .= ' style="border-left: Solid 12px ' . $event['farbe'] . '"';
 
                 $ausgabe .= 'id="' . $event['id'] . '"';
                 $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
                 $ausgabe .= '" onClick="zeigeEvent(' . $event['id'] . ')" ';
-                $ausgabe .= '>' . $event['titel'] . '</div>';
-                //$ausgabe .= $event->toHTML();
+                $ausgabe .= '>' . $event['titel'] . '</div>';*/
+                $ausgabe .= $event->toHTML();
             }
 
             unset($event); // Entferne die Referenz auf das letzte Element

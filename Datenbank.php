@@ -57,6 +57,36 @@ class Datenbank
         }
     }
 
+    public function addEvent2(Termin $termin)
+    {
+        try {
+          if($termin->getKategorie() !== null) {
+            if($termin->getKategorie()->id === null) {
+              if($termin->getKategorie()->getName() !== '') {            
+                $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES(?,?)"; //SQL Statement
+                $kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                $kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
+                $termin->setKategorieid($this->dbCon->lastInsertId());
+                echo "Neue Kategorie wurde in der Datenbank eingetragen.<br/>";
+              }
+            }
+          }
+          else {
+            $termin->setKategorieid(null);
+          }
+           
+
+            $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES (?, ?, ?, ?, ?, ?, ?)"; //SQL Statement
+            $kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+            $kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
+            echo "Termin wurde in der Datenbank eingetragen.<br/>";
+            $this->dbCon = null; // Verbindung zur DB wird geschlossen
+        } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
+            // gecatched und der Fehler ausgegeben.
+            echo "Fehler: " . $e->getMessage();
+        }
+    }
+
     public function getAllEvents()
     {
         //\\ Implementierung wenn benötigt!
@@ -66,19 +96,38 @@ class Datenbank
     {
         $events = [];
 
-        $select = $this->dbCon->prepare("SELECT *
+        /*$select = $this->dbCon->prepare("SELECT *
                                       FROM `termine` LEFT JOIN `kategorie` ON termine.kategorieid = kategorie.id
+                                      WHERE (YEAR(`anfang`) = :jahr AND MONTH(`anfang`) = :monat AND DAY(`anfang`) = :tag)
+                                      ORDER BY `anfang` ASC");*/
+        $select = $this->dbCon->prepare("SELECT *
+                                      FROM `termine`
                                       WHERE (YEAR(`anfang`) = :jahr AND MONTH(`anfang`) = :monat AND DAY(`anfang`) = :tag)
                                       ORDER BY `anfang` ASC");
 
         if ($select->execute([':jahr' => $jahr, ':monat' => $monat, ':tag' => $tag])) {
-            //$events = $select->fetchAll(PDO::FETCH_CLASS, 'Termin');
-            $events = $select->fetchAll();
+            $events = $select->fetchAll(PDO::FETCH_CLASS, 'Termin');
+            //$events = $select->fetchAll();
         }
 
         return $events;
 
     } // Ende Funktion getEventsonDay()
+
+    public function getEventbyId($id) : Termin {
+
+      $event = NULL;
+
+      $select = $this->dbCon->prepare("SELECT *
+                                    FROM `termine`
+                                    WHERE `id` = :id");
+
+      if ($select->execute([':id' => $id])) {
+        $event = $select->fetchObject('Termin');
+      }
+
+      return ($event) ? $event : NULL;
+    }
 
     public function getKategorie($katid)
     {

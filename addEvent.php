@@ -65,16 +65,22 @@ if (isset($subButton)) {
         $tmpGanztag = 0;
     }
 
-    //Datum udn Zeit für Eintrag in Datenbank vorberreiten
+    //Datum und Zeit für Eintrag in Datenbank vorberreiten
     $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'] . ":00";
     echo $anfang;
     $ende = $_POST['enddatum'] . " " . $_POST['endzeit'] . ":00";
     echo $ende;
-    $termin = new Termin($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+    //$termin = new Termin($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+    $termin = new Termin();
+    $termin->addDetails($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $tmpGanztag);
+
+    if($termin->getKategorie() == null && !empty($_POST['kategorie']) ) {
+        $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
+    }
 
     //$termin->terminErstellen($_POST['titel'], $_POST['beschreibung'], $_POST['anfang'], $_POST['ende'],  $_POST['ort'],  $_POST['kategorie'], $_POST['farbe'], $termin->getGanztag());
-    echo "kategorieID: " . $termin->getKategorieid();
+    //echo "kategorieID: " . $termin->getKategorieid();
 
-    $db->addEvent($termin);
+    $db->addEvent2($termin);
     echo '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>';
 }

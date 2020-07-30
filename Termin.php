@@ -1,6 +1,17 @@
 <?php
 
-//include "kategorie.php";
+require_once("Datenbank.php");
+
+if (isset($_GET["details"])) {
+  $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
+  if(isset($id)) {
+    $termin = $GLOBALS["db"]->getEventbyId($id);
+  }
+
+  if(isset($termin)) {
+    echo $termin->toHTMLDetails();
+  }
+}
 
 class Termin
 {
@@ -13,18 +24,39 @@ class Termin
     private $ort;
     private $kategorieid;
     private $kategorie;
-    private $farbe;
+    //private $farbe;
 
-/* neuen Konstruktor zum Erstellen eines Termins verwenden
+//\\ neuen Konstruktor zum Erstellen eines Termins verwenden
 public function __construct() {
         //\\ holen des Kategorie-Datensatzes für diesen Termin
         if(isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
-            $this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
+            //$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
         }
-    }*/
+    }
 
-    public function __construct($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
+    public function addDetails($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $ganztag = '0') {
+      $this->anfang = $anfang;
+      $this->ende = $ende;
+      $this->titel = $titel;
+      $this->beschreibung = $beschreibung;
+      $this->ort = $ort;
+      $this->ganztag = $ganztag;
+      //$this->farbe = $farbe;
+      $this->kategorieid = $kategorieid;
+      if(isset($this->kategorieid)) {
+          $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
+          //$this->farbe = $farbe;
+          //$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
+      }
+    }
+
+    public function addKategorie($name, $farbe) {
+      $this->kategorie = new Kategorie();
+      $this->kategorie->addDetails($name, $farbe);
+    }
+
+    /*public function __construct($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
         $this->anfang = $anfang;
         $this->ende = $ende;
@@ -41,7 +73,7 @@ public function __construct() {
 
         }
         echo "Termin erstellt";
-    }
+    }*/
     public function __set($name, $value) {}
     //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
     //public function __get($name) {return $this->$name;}
@@ -56,6 +88,37 @@ public function __construct() {
         $html .= '>' . $this->titel . '</div>';
 
         return $html;
+    }
+
+    public function toHTMLDetails() : string {
+      //\\ Kopfzeile / Navigation
+      $html  = '<tr><td colspan="10">';
+      $html .= '<table id="eventNav"><tbody><tr>';
+      $html .= '<th>';
+      $html .= '<span class="eventTitle">' . $this->titel . '</span>';
+      $html .= '</th>';
+      $html .= '<td>';
+      $html .= '<img class="eventLink ico_edit" onclick="window.location.replace(\'addEvent.php\?id='. $this->id .'\')"></img>';
+      $html .= '</td>';
+      $html .= '<td>';
+      $html .= '<img class="eventLink ico_del" onclick="window.location.replace(\'Termin.php\?delete&id='. $this->id .'\')"></img>';
+      $html .= '</td>';
+      $html .= '</tr>';
+      $html .= '</tbody></table>';
+
+      //\\ EventDetails
+      $html .= '<div id="eventDetails">';
+      $html .= $this->anfang . ' - ' . $this->ende . '</br>';
+      $html .= $this->beschreibung . '</br>';
+      $html .= $this->ort . '</br>';
+      $html .= $this->kategorie->name . '</br>';
+
+      $html .= '</div>';
+
+      //\\ Abschluss
+      $html .= '</td>';
+
+      return $html;
     }
 
     /**
