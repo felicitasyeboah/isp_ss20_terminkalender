@@ -93,7 +93,9 @@ public function __construct() {
     public function toHTMLDetails() : string {
       //\\ Kopfzeile / Navigation
       $html  = '<tr><td colspan="10">';
-      $html .= '<table id="eventNav"><tbody><tr>';
+      $html .= '<table id="eventNav"';
+      if(isset($this->kategorie)) $html .= ' style="background-color: ' . $this->kategorie->farbe . '"'; 
+      $html .= '"><tbody><tr>';
       $html .= '<th>';
       $html .= '<span class="eventTitle">' . $this->titel . '</span>';
       $html .= '</th>';
@@ -111,7 +113,7 @@ public function __construct() {
       $html .= $this->anfang . ' - ' . $this->ende . '</br>';
       $html .= $this->beschreibung . '</br>';
       $html .= $this->ort . '</br>';
-      $html .= $this->kategorie->name . '</br>';
+      if(isset($this->kategorie)) $html .= $this->kategorie->name . '</br>';
 
       $html .= '</div>';
 
