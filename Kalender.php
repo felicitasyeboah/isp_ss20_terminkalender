@@ -12,7 +12,7 @@ class Kalender
     private $infoDatum;
     private $tagDerWoche;
 
-    public function __construct($monat, $jahr, $woche, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
+    public function __construct($monat, $jahr, $woche, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do',  'Fr',  'Sa',  'So',))
     {
         $this->monat = $monat;
         $this->jahr = $jahr;
@@ -22,23 +22,6 @@ class Kalender
         $this->infoDatum = getdate(mktime(0, 0, 0, $monat, 1, $jahr));
         //minus 1 damit unser Kalender mit Montag beginnt und nicht mit Sonntag
         $this->tagDerWoche = $this->infoDatum['wday'] - 1;
-    }
-
-    /**
-     * Baut eine Verbindung zur MYSQL Datenbank auf und gibt diese Verbindung zurück
-     * @return PDO
-     */
-    function linkDB()
-    {
-        try {
-            $db = new PDO("mysql:dbname=" . MYSQL_DB . ";host=" . MYSQL_HOST . ";charset=utf8", MYSQL_BENUTZER, MYSQL_KENNWORT);
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            //echo "Verbindung ueber PDO hergestellt.";
-            return $db;
-        } catch (PDOException $e) {
-            //echo "Fehler: " . htmlspecialchars($e->getMessage());
-            exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
-        }
     }
 
     /**
@@ -127,7 +110,7 @@ class Kalender
     public function showWeek()
     {
         echo 'Show week';
-        $ausgabe = '<table>';
+        $ausgabe = '<table id="views">';
         $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
 
         $ausgabe .= '<thead><tr>';
@@ -166,14 +149,14 @@ class Kalender
             $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             foreach ($events as &$event) {
                 //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
-                $ausgabe .= '<div class="event"';
+                /*$ausgabe .= '<div class="event"';
                 if ($event['kategorieid'] > 0) $ausgabe .= ' style="border-left: Solid 12px ' . $event['farbe'] . '"';
 
                 $ausgabe .= 'id="' . $event['id'] . '"';
                 $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
                 $ausgabe .= '" onClick="zeigeEvent(' . $event['id'] . ')" ';
-                $ausgabe .= '>' . $event['titel'] . '</div>';
-                //$ausgabe .= $event->toHTML();
+                $ausgabe .= '>' . $event['titel'] . '</div>';*/
+                $ausgabe .= $event->toHTML();
             }
 
             unset($event); // Entferne die Referenz auf das letzte Element
@@ -197,6 +180,7 @@ class Kalender
         $ausgabe .= '</tr></table>';
 
         echo $ausgabe;
+
 
     } // Ende Funktion showWeek()
 
@@ -206,7 +190,7 @@ class Kalender
     public function showDay()
     {
         echo 'Show day';
-        $ausgabe = '<table>';
+        $ausgabe = '<table id="views">';
         $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
 
         $ausgabe .= '<thead><tr>';
@@ -245,14 +229,14 @@ class Kalender
             $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             foreach ($events as &$event) {
                 //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
-                $ausgabe .= '<div class="event"';
+                /*$ausgabe .= '<div class="event"';
                 if ($event['kategorieid'] > 0) $ausgabe .= ' style="border-left: Solid 12px ' . $event['farbe'] . '"';
 
                 $ausgabe .= 'id="' . $event['id'] . '"';
                 $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
                 $ausgabe .= '" onClick="zeigeEvent(' . $event['id'] . ')" ';
-                $ausgabe .= '>' . $event['titel'] . '</div>';
-                //$ausgabe .= $event->toHTML();
+                $ausgabe .= '>' . $event['titel'] . '</div>';*/
+                $ausgabe .= $event->toHTML();
             }
 
             unset($event); // Entferne die Referenz auf das letzte Element
@@ -276,6 +260,7 @@ class Kalender
         $ausgabe .= '</tr></table>';
 
         echo $ausgabe;
+
 
     } // Ende Funktion showDay()
 }

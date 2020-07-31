@@ -30,7 +30,7 @@ class Datenbank
      * Traegt einen Temrin in den Kalender ein
      * @param Termin $termin
      */
-    public function addEvent(Termin $termin)
+    public function addEventOld(Termin $termin)
     {
         try {
             //$db_con = self::linkDB(); // die mit der function linkDB() aufgebaute Verbindung zur DB wird in $db_con gespeichtert
@@ -57,7 +57,7 @@ class Datenbank
         }
     }
 
-    public function addEvent2(Termin $termin)
+    public function addEvent(Termin $termin)
     {
         try {
           if($termin->getKategorie() !== null) {
@@ -154,13 +154,15 @@ class Datenbank
      * Lädt alle Kategorien ins Dropdownmenue der addEvent.php
      */
     public function getAllKategorien() {
-
+        $html = "";
         $sql = "SELECT * FROM `kategorie`";
         $ergebnis = $this->dbCon->query($sql);
         foreach($ergebnis as $zeile) {
-            echo "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
-
+            // "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
+            $html .= '<option value="' . htmlspecialchars($zeile["id"]). '">"' . htmlspecialchars($zeile["name"]) . '"</option>';
         }
+        return $html;
+
     }
 
     /*public function getColor($kategorieid){

@@ -1,31 +1,10 @@
-<!--
-Semester Projekt in dem Modul ISP SS20
-TODO Autoren: Christian Till - Matrikelnr. 238872  und Felicitas Yeboah - Matrikelnr. 290784
-TODO Abgabedatum  02.08.2020
--->
-<?php
-
-require_once("dbConf.php");
-include "Kalender.php";
-
-//include("inc/header.inc.php");
-//require_once("createTable.php");
-//include "inc/footer.inc.php";
-?>
-<!doctype html>
-<html lang="de">
-<head>
-    <link rel="stylesheet" href="css/styles.css">
-    <meta name="author" content="Felicitas Yeboah - Martrikelnummer: 290784">
-    <meta name="author" content="Christian Till - Martrikelnummer: 238872">
-    <meta name="description" content="ISP - Projekt Terminkalender Gruppe 16 - SS20 - Felicitas Yeboah - 290784 und Christian Till - 238872">
-    <title>ISP - Projekt Terminkalender Gruppe 16 - SS20 - Felicitas Yeboah - 290784 und Christian Till - 238872</title>
-
-</head>
-<body>
-<main>
     <?php
+    require_once("dbConf.php");
+    include "Kalender.php";
+    include("inc/header.inc.php");
+    //require_once("createTable.php");
     echo '<div id="container">';
+
     //\\ Verbindung zur Datenbank herstellen
     // Wird nun in der Datei Datenbank.php erstellt
     //$db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
@@ -65,7 +44,6 @@ include "Kalender.php";
     }*/
     echo '</div>';
     echo '<p></p>';
-   //$kalender->showWeek();
     // Laedt Seite addEvent.php -->
     echo '<input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace(\'addEvent.php\')">';
 
@@ -84,6 +62,9 @@ include "Kalender.php";
     echo '<input type="button" name="showWeek" value="Wochenansicht" onclick="loadWeek(' . $woche . ', '.$monat .' , '.$jahr .')">';
     echo '<input type="button" name="showWeek" value="Tagesansicht" onclick="loadDay(' . $woche . ', '.$monat .' , '.$jahr .')">';
     echo '<input type="button" name="showWeek" value="Monatsansicht" onclick="loadMonth(' . $woche . ', '.$monat .' , '.$jahr .')">';
+
+
+    include "inc/footer.inc.php";
     ?>
 
     <!-- Javascript Funktionen zum laden der einzelnen Ansichten des Kalenders mittels Ajax -->
@@ -158,6 +139,3 @@ include "Kalender.php";
     </script>
 
 
-</main>
-</body>
-</html>
