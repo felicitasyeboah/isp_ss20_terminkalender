@@ -4,15 +4,22 @@
 require_once("EventFactory.php");
 //include_once("EventFactory.php");
 
-if (isset($_GET["details"])) {
+if (isset($_GET["details"]) || isset($_GET["delete"])) {
   $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
   if(isset($id)) {
     $factory = new EventFactory();
     $termin = $factory->getEvent($id)[0];
   }
 
-  if(isset($termin)) {
+  if(isset($termin) && isset($_GET["details"])) {
     echo $termin->toHTMLDetails();
+  }
+
+  if(isset($termin) && isset($_GET["delete"])) {
+    $termin->deleteEvent();
+    $ausgabe = "Termin " . $termin->getTitel() . " erfolgreich gelöscht!";
+    $ausgabe .= '</br> <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
+    echo $ausgabe;
   }
 }
 
@@ -91,7 +98,6 @@ public function __construct() {
                     //sonst Termin bereits vorhanden, dann Updaten
                 } else {
                     $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "', `beschreibung` = '" . $this->beschreibung . "', `ort` = '". $this->ort ."' WHERE `termine`.`id` =".$this->id ."";
-                    echo $sql;
                     $GLOBALS["db"]->update($sql);
                 }
               //$this->dbCon = null; // Verbindung zur DB wird geschlossen
@@ -101,6 +107,10 @@ public function __construct() {
           }
       }
 
+      public function deleteEvent() {
+        $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
+        $GLOBALS["db"]->delete($sql);
+      }
 
     public function __set($name, $value) {}
     //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert

@@ -56,7 +56,9 @@ class Database
     }
 
     public function delete($sql) {
+      $statement = $this->dbCon->prepare($sql);
 
+      $statement->execute();
     }
 
     public function getlastId() {
