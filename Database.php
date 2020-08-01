@@ -1,18 +1,18 @@
 <?php
 
 require_once "dbConf.php";
-require_once "Kategorie.php";
+require_once "Category.php";
 
 //Globale Varable für ein Datenbankobjekt.
-$db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+$db = new Database(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
-class Datenbank
+class Database
 {
     private $dbCon;
 
     public function __construct($db, $host, $user, $pass)
     {
-        // Verbindung zur Datenbank aufbauen
+        // Verbindung zur Database aufbauen
         try {
             $this->dbCon = new PDO("mysql:dbname=" . $db . ";host=" . $host . ";charset=utf8", $user, $pass);
             $this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -75,7 +75,7 @@ class Datenbank
                                     WHERE `id` = :katid");
 
         if ($select->execute([':katid' => $katid])) {
-            $kategorie = $select->fetchObject('Kategorie');
+            $kategorie = $select->fetchObject('Category');
         }
 
         return ($kategorie) ? $kategorie : NULL;

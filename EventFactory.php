@@ -1,7 +1,7 @@
 <?php
 
 require_once "Event.php";
-require_once "Datenbank.php";
+require_once "Database.php";
 
 class EventFactory
 {

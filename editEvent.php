@@ -1,5 +1,5 @@
 <?php
-require_once "Datenbank.php";
+require_once "Database.php";
 require_once "EventFactory.php";
 $ausgabe = '';
 //date('Y-m-d')
@@ -43,9 +43,9 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
                                                 value="1" checked onclick="setTime(this)"><br><br></label>
         <label>Ort:<var>* </var><input size="50px" type="text" name="ort" value="' . $ort . '"><br><br></label>
 
-        <label>Kategorie: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)"/>
+        <label>Category: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)"/>
             <datalist id="kategorieName">
-            //Vorhandende Kategorien werden aus der Datenbank geladen' . $db->getAllKategorien() . '
+            //Vorhandende Kategorien werden aus der Database geladen' . $db->getAllKategorien() . '
                  
             </datalist>
         </label>
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $tmpGanztag = 0;
         }
 
-        //Datum und Zeit für Eintrag in Datenbank vorbereiten
+        //Datum und Zeit für Eintrag in Database vorbereiten
         $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'] . ":00";
         echo $anfang;
         $ende = $_POST['enddatum'] . " " . $_POST['endzeit'] . ":00";
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $termin = $factory->createEvent($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
         
-        //\\ wurde eine neue Kategorie eingegeben?
+        //\\ wurde eine neue Category eingegeben?
         if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
             $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
         }
@@ -204,7 +204,7 @@ include "inc/footer.inc.php";
         console.log('geht');
     }
 
-   //Farbe wird passen zu ausgewählten Kategorie aktualisiert (mit Ajax)
+   //Farbe wird passen zu ausgewählten Category aktualisiert (mit Ajax)
     function loadColor(id) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {

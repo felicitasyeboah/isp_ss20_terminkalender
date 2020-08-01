@@ -5,9 +5,9 @@
     //require_once("createTable.php");
     echo '<div id="container">';
 
-    //\\ Verbindung zur Datenbank herstellen
-    // Wird nun in der Datei Datenbank.php erstellt
-    //$db = new Datenbank(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
+    //\\ Verbindung zur Database herstellen
+    // Wird nun in der Datei Database.php erstellt
+    //$db = new Database(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
 
     //\\ Kalender aufbauen und anzeigen
     $monat = (int)date('m');

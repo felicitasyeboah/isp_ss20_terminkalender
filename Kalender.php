@@ -1,6 +1,6 @@
 <?php
 
-include "Datenbank.php";
+include "Database.php";
 include "EventFactory.php";
 
 class Kalender

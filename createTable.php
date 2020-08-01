@@ -28,7 +28,7 @@ try {
     }
 } catch (PDOException $e) {
     // Nachricht bei Fehler
-    exit("Fehler beim Anlegen der Datenbank-Tabelle!" .
+    exit("Fehler beim Anlegen der Database-Tabelle!" .
         $e->getMessage());
 }
 
@@ -40,7 +40,7 @@ try {
         `farbe` CHAR(7) , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
     if ($dbinst->exec($createTable)) {
-        echo "Tabelle Kategorie angelegt.";
+        echo "Tabelle Category angelegt.";
     }
     $sql = "INSERT INTO `kategorie` (`id`, `name`, `farbe`) VALUES (NULL, 'Privat', '#9DDF20');";
     $dbinst->exec($sql);
@@ -64,7 +64,7 @@ try {
     }
 } catch (PDOException $e) {
     // Nachricht bei Fehler
-    exit("Fehler beim anlegen der Datenbank-Tabelle kategorie!" .
+    exit("Fehler beim anlegen der Database-Tabelle kategorie!" .
         $e->getMessage());
 }
 

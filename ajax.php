@@ -1,5 +1,5 @@
 <?php
-include "Datenbank.php";
+include "Database.php";
 $sql = "SELECT farbe FROM kategorie WHERE id = :id";
 $kommando = $db->getDbCon()->prepare($sql);
 

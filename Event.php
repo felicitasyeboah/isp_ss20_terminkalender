@@ -1,7 +1,7 @@
 <?php
 
-require_once("Datenbank.php");
-require_once("Kategorie.php");
+require_once("Database.php");
+require_once("Category.php");
 
 if (isset($_GET["details"])) {
   $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
@@ -24,19 +24,19 @@ class Event
     private $beschreibung;
     private $ort;
     private $kategorieid;
-    private $kategorie; //\\ Objekt der Klasse "Kategorie"
+    private $kategorie; //\\ Objekt der Klasse "Category"
     private $farbe;
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
 public function __construct() {
-        //\\ holen des Kategorie-Datensatzes für diesen Event
+        //\\ holen des Category-Datensatzes für diesen Event
         if(isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
         }
       }
 
       public function addKategorie($name, $farbe) {
-        $this->kategorie = new Kategorie();
+        $this->kategorie = new Category();
         $this->kategorie->addDetails($name, $farbe);
       }
 
@@ -53,7 +53,7 @@ public function __construct() {
                   //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
                   //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
                   $this->kategorieid = $GLOBALS["db"]->getlastId();
-                  echo "Neue Kategorie wurde in der Datenbank eingetragen.<br/>";
+                  echo "Neue Category wurde in der Database eingetragen.<br/>";
                 }
               }
             }
@@ -66,7 +66,7 @@ public function __construct() {
               //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
               //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
               $GLOBALS["db"]->insert($sql);
-              echo "Event wurde in der Datenbank eingetragen.<br/>";
+              echo "Event wurde in der Database eingetragen.<br/>";
               //$this->dbCon = null; // Verbindung zur DB wird geschlossen
           } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
               // gecatched und der Fehler ausgegeben.
