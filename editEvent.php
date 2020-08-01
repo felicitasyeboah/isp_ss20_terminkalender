@@ -5,10 +5,10 @@ $ausgabe = '';
 //date('Y-m-d')
 //date('H:i')
 //date('H:i', time() + 3600)
-if (isset($_POST["id"])) {
+if (isset($_GET["id"])) {
   $factory = new EventFactory();
-  $termin = $factory->getEvent($_POST['id']);
-  $tempid = $_POST["id"];
+  $termin = $factory->getEvent($_GET["id"])[0];
+  $tempid = $_GET["id"];
 
   $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
   //......
