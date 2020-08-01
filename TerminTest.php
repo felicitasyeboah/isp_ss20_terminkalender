@@ -33,7 +33,7 @@ class TerminTest
         $this->farbe = $farbe;
 
     }
-    //\\ gibt den Termin in HTML-Ansicht zurück
+    //\\ gibt den Event in HTML-Ansicht zurück
     public function toHTML(): string {
         $html  = '<div class="event"';
         if(isset($this->kategorie)) $html .= ' style="border-left: Solid 12px #'. $this->farbe . '"';

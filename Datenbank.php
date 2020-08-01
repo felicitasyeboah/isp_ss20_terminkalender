@@ -53,7 +53,7 @@ class Datenbank
     }
 
     /**
-     * Lädt alle Kategorien ins Dropdownmenue der addEvent.php
+     * Lädt alle Kategorien ins Dropdownmenue der editEvent.php
      */
     public function getAllKategorien() {
       $html = "";

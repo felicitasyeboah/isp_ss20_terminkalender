@@ -44,8 +44,8 @@
     }*/
     echo '</div>';
     echo '<p></p>';
-    // Laedt Seite addEvent.php -->
-    echo '<input type="button" name="addEvent" value="Termin hinzufügen" onclick="window.location.replace(\'addEvent.php\')">';
+    // Laedt Seite editEvent.php -->
+    echo '<input type="button" name="addEvent" value="Event hinzufügen" onclick="window.location.replace(\'editEvent.php\')">';
 
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
    /* echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
@@ -111,7 +111,7 @@
     <script>
 
       const verzeichnis = "";
-      const kalender = verzeichnis + "Termin.php";
+      const kalender = verzeichnis + "Event.php";
       const XHR = new XMLHttpRequest();
 
       // Event

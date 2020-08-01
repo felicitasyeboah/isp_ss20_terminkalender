@@ -1,6 +1,6 @@
 <?php
 
-require_once "Termin.php";
+require_once "Event.php";
 require_once "Datenbank.php";
 
 class EventFactory
@@ -11,7 +11,7 @@ class EventFactory
 
     public function createEvent($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
-      $event = new Termin();
+      $event = new Event();
 
       $event->setAnfang($anfang);
       $event->setEnde($ende);
@@ -63,7 +63,7 @@ class EventFactory
 
     } // Ende Funktion getEventsonDay()
 
-    public function getEventbyId($id) : Termin {
+    public function getEventbyId($id) : Event {
 
       $event = NULL;
 
@@ -72,7 +72,7 @@ class EventFactory
                                     WHERE `id` = :id");
 
       if ($select->execute([':id' => $id])) {
-        $event = $select->fetchObject('Termin');
+        $event = $select->fetchObject('Event');
       }
 
       return ($event) ? $event : NULL;

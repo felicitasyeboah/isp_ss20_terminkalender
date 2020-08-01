@@ -14,7 +14,7 @@ if (isset($_GET["details"])) {
   }
 }
 
-class Termin
+class Event
 {
     private $id;
     private $titel;
@@ -29,7 +29,7 @@ class Termin
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
 public function __construct() {
-        //\\ holen des Kategorie-Datensatzes für diesen Termin
+        //\\ holen des Kategorie-Datensatzes für diesen Event
         if(isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
         }
@@ -66,7 +66,7 @@ public function __construct() {
               //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
               //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
               $GLOBALS["db"]->insert($sql);
-              echo "Termin wurde in der Datenbank eingetragen.<br/>";
+              echo "Event wurde in der Datenbank eingetragen.<br/>";
               //$this->dbCon = null; // Verbindung zur DB wird geschlossen
           } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
               // gecatched und der Fehler ausgegeben.
@@ -79,7 +79,7 @@ public function __construct() {
     //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
     //public function __get($name) {return $this->$name;}
 
-    //\\ gibt den Termin in HTML-Ansicht zurück
+    //\\ gibt den Event in HTML-Ansicht zurück
     public function toHTML(): string {
         $html  = '<div class="event"';
         if(isset($this->kategorie) && !isset($this->farbe)) $html .= ' style="border-top: Solid 6px '. $this->kategorie->farbe . '"';
@@ -102,10 +102,10 @@ public function __construct() {
       $html .= '<span class="eventTitle">' . $this->titel . '</span>';
       $html .= '</th>';
       $html .= '<td>';
-      $html .= '<img class="eventLink ico_edit" onclick="window.location.replace(\'addEvent.php\?id='. $this->id .'\')"></img>';
+      $html .= '<img class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id='. $this->id .'\')"></img>';
       $html .= '</td>';
       $html .= '<td>';
-      $html .= '<img class="eventLink ico_del" onclick="window.location.replace(\'Termin.php\?delete&id='. $this->id .'\')"></img>';
+      $html .= '<img class="eventLink ico_del" onclick="window.location.replace(\'Event.php\?delete&id='. $this->id .'\')"></img>';
       $html .= '</td>';
       $html .= '</tr>';
       $html .= '</tbody></table>';
