@@ -15,7 +15,8 @@ try {
         `ganztag` TINYINT(1) NOT NULL DEFAULT '0' , 
         `titel` VARCHAR(65) NOT NULL , 
         `beschreibung` TEXT , 
-        `ort` VARCHAR(65) , 
+        `ort` VARCHAR(65) ,
+        `farbe` CHAR(7) ,  
         `kategorieid` INT , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
     if ($dbinst->exec($createTable)) {

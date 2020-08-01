@@ -1,6 +1,7 @@
 <?php
 
 require_once("Datenbank.php");
+require_once("Kategorie.php");
 
 if (isset($_GET["details"])) {
   $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
@@ -23,57 +24,57 @@ class Termin
     private $beschreibung;
     private $ort;
     private $kategorieid;
-    private $kategorie;
-    //private $farbe;
+    private $kategorie; //\\ Objekt der Klasse "Kategorie"
+    private $farbe;
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
 public function __construct() {
         //\\ holen des Kategorie-Datensatzes für diesen Termin
         if(isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
-            //$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
         }
-    }
-
-    public function addDetails($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $ganztag = '0') {
-      $this->anfang = $anfang;
-      $this->ende = $ende;
-      $this->titel = $titel;
-      $this->beschreibung = $beschreibung;
-      $this->ort = $ort;
-      $this->ganztag = $ganztag;
-      //$this->farbe = $farbe;
-      $this->kategorieid = $kategorieid;
-      if(isset($this->kategorieid)) {
-          $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
-          //$this->farbe = $farbe;
-          //$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
       }
-    }
 
-    public function addKategorie($name, $farbe) {
-      $this->kategorie = new Kategorie();
-      $this->kategorie->addDetails($name, $farbe);
-    }
+      public function addKategorie($name, $farbe) {
+        $this->kategorie = new Kategorie();
+        $this->kategorie->addDetails($name, $farbe);
+      }
 
-    /*public function __construct($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
-        $this->anfang = $anfang;
-        $this->ende = $ende;
-        $this->titel = $titel;
-        $this->beschreibung = $beschreibung;
-        $this->ort = $ort;
-        $this->ganztag = $ganztag;
-        $this->farbe = $farbe;
-        $this->kategorieid = $kategorieid;
-        if(isset($this->kategorieid)) {
-            $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
-            $this->farbe = $farbe;
-            //$this->farbe = $GLOBALS["db"]->getKategorie($this->farbe);
+      public function addEvent()
+      {
+          try {
+            if($this->kategorie !== null) {
+              if($this->kategorie->id === null) {
+                if($this->kategorie->name !== '') {            
+                  //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
+                  $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->name . "','" . $this->kategorie->farbe . "')"; //SQL Statement
+                  $GLOBALS["db"]->insert($sql);
+                  //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                  //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
+                  $this->kategorieid = $GLOBALS["db"]->getlastId();
+                  echo "Neue Kategorie wurde in der Datenbank eingetragen.<br/>";
+                }
+              }
+            }
+            else {
+              $this->kategorieid = null;
+            }
+             
+  
+              $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES ('" . $this->anfang . "','" . $this->ende ."',". $this->ganztag .",'" . $this->titel . "','" . $this->beschreibung ."','" . $this->ort ."'," . $this->kategorieid . ")"; //SQL Statement
+              //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+              //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
+              $GLOBALS["db"]->insert($sql);
+              echo "Termin wurde in der Datenbank eingetragen.<br/>";
+              //$this->dbCon = null; // Verbindung zur DB wird geschlossen
+          } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
+              // gecatched und der Fehler ausgegeben.
+              echo "Fehler: " . $e->getMessage();
+          }
+      }
 
-        }
-        echo "Termin erstellt";
-    }*/
+
     public function __set($name, $value) {}
     //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
     //public function __get($name) {return $this->$name;}
@@ -81,7 +82,8 @@ public function __construct() {
     //\\ gibt den Termin in HTML-Ansicht zurück
     public function toHTML(): string {
         $html  = '<div class="event"';
-        if(isset($this->kategorie)) $html .= ' style="border-left: Solid 12px '. $this->kategorie->farbe . '"';
+        if(isset($this->kategorie) && !isset($this->farbe)) $html .= ' style="border-top: Solid 6px '. $this->kategorie->farbe . '"';
+        if(isset($this->farbe)) $html .= ' style="border-top: Solid 12px '. $this->farbe . '"';
         $html .= 'id="' . $this->id . '"';
         $html .= 'title="' . $this->beschreibung . '&#013;' . $this->ort . '"';
         $html .= ' onClick="zeigeEvent(' . $this->id . ')" ';

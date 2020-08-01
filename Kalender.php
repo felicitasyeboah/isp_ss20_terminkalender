@@ -1,6 +1,7 @@
 <?php
 
 include "Datenbank.php";
+include "EventFactory.php";
 
 class Kalender
 {
@@ -67,7 +68,8 @@ class Kalender
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
-            $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
+            $evfactory = new EventFactory();
+            $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter);
             foreach ($events as &$event) {
                 //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
                 /*$ausgabe .= '<div class="event"';

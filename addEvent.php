@@ -1,21 +1,34 @@
 <?php
 require_once "Datenbank.php";
+require_once "EventFactory.php";
 $ausgabe = '';
 //date('Y-m-d')
 //date('H:i')
 //date('H:i', time() + 3600)
-$plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
-$defaultTime = "00:00";
-$titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
-$beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
-$anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
-$anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : $defaultTime;
-$enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : $plusEinTag;
-$endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $defaultTime;
-$ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
+if (isset($_POST["id"])) {
+  $factory = new EventFactory();
+  $termin = $factory->getEvent($_POST['id']);
+  $tempid = $_POST["id"];
+
+  $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
+  //......
+}
+else {
+  $plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
+  $defaultTime = "00:00";
+  $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
+  $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
+  $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
+  $anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : $defaultTime;
+  $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : $plusEinTag;
+  $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $defaultTime;
+  $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
+  $tempid = "";
+}
 
 
 $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">
+        <input type="text" style="display: none;" id="tempid" name="tempid" value="' . $tempid . '">
         <label>Titel:<var>* </var><br/><input size="65px" type="text" name="titel" value="' . $titel . '"><br><br></label>
         <label for="beschreibung">Beschreibung des Termins<var>* </var><br/>
             <textarea id="beschreibung" name=" beschreibung" rows="10" cols="60">' . $beschreibung . '</textarea>
@@ -78,17 +91,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         echo $anfang;
         $ende = $_POST['enddatum'] . " " . $_POST['endzeit'] . ":00";
         echo $ende;
-        $termin = new Termin();
-        $termin->addDetails($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $tmpGanztag);
+        $factory = new EventFactory();
+        $termin = $factory->createEvent($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
+        
+        //\\ wurde eine neue Kategorie eingegeben?
         if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
             $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
         }
 
-        //$termin->terminErstellen($_POST['titel'], $_POST['beschreibung'], $_POST['anfang'], $_POST['ende'],  $_POST['ort'],  $_POST['kategorie'], $_POST['farbe'], $termin->getGanztag());
-        //echo "kategorieID: " . $termin->getKategorieid();
-
-        $db->addEvent($termin);
+        $termin->addEvent();
         $ausgabe .= '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>' . $formular;
         //}
     }
