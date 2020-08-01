@@ -50,7 +50,9 @@ class Database
     }
 
     public function update($sql) {
+        $statement = $this->dbCon->prepare($sql);
 
+        $statement->execute();
     }
 
     public function delete($sql) {
@@ -90,6 +92,19 @@ class Database
         return ($kategorie) ? $kategorie : NULL;
 
     } // Ende Funktion getKategorie()
-}
 
+ // Ende Funktion getKategorie()
+
+/*public function getColor($kategorieid){
+  $sql = "SELECT farbe FROM kategorie WHERE id = :id";
+  $kommando = $this->dbCon->prepare($sql);
+
+  $kommando->bindParam(":id", $kategorieid);
+  $kommando->execute();
+  while($zeile = $kommando->fetch(PDO::FETCH_OBJ)) {
+      $ergebnis = $zeile->farbe;
+  }
+  return $ergebnis;
+}*/
+}
 ?>

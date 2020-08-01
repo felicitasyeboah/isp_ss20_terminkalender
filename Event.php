@@ -22,13 +22,16 @@ class Event
     private $titel;
     private $anfang;
     private $ende;
+    private $anfangsdatum;
+    private $anfangszeit;
+    private $enddatum;
+    private $endzeit;
     private $ganztag;
     private $beschreibung;
     private $ort;
     private $kategorieid;
     private $kategorie; //\\ Objekt der Klasse "Category"
     private $farbe;
-    private $gruppe;
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
 public function __construct() {
@@ -51,35 +54,38 @@ public function __construct() {
               if($this->kategorie->getId() === null) {
                 if($this->kategorie->getName() !== '') {            
                   //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
-                  $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
-                  $GLOBALS["db"]->insert($sql);
-                  //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                  //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
-                  $this->kategorieid = $GLOBALS["db"]->getlastId();
-                  echo "Neue Category wurde in der Database eingetragen.<br/>";
+                  if($this->getId() == "") {
+                      $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
+                      $GLOBALS["db"]->insert($sql);
+                      echo "Neue Category wurde in der Database eingetragen.<br/>";
+                  } else {
+                      //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                      //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
+                      $this->kategorieid = $GLOBALS["db"]->getlastId();
+                  }
                 }
               }
             }
             else {
               $this->kategorieid = null;
             }
-             
-  
-              $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende ."',". $this->ganztag .",'" . $this->titel . "','" . $this->beschreibung ."','" . $this->ort ."',"; //SQL Statement
-              if($this->kategorieid === null) {
-                $sql .= "NULL";
-              } else {
-                $sql .= $this->kategorieid;
-              }
-              if($this->gruppe === null) {
-                $sql .= ",NULL)";
-              } else {
-                $sql .= ",'" . $this->gruppe . "')";
-              }
-              //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-              //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
-              $GLOBALS["db"]->insert($sql);
-              echo "Event wurde in der Database eingetragen.<br/>";
+             //gibt es einen Termin noch nicht, dann eintragen
+                if ($this->getId() == "") {
+                    $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
+                    if ($this->kategorieid === null) {
+                        $sql .= "NULL)";
+                    } else {
+                        $sql .= $this->kategorieid . ")";
+                    }
+                    //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                    //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
+                    $GLOBALS["db"]->insert($sql);
+                    echo "Event wurde in der Database eingetragen.<br/>";
+                    //sonst Termin bereits vorhanden, dann Updaten
+                } else {
+                    $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = '$this->ende', `ganztag` = '. $this->ganztag .', `titel` = '" . $this->titel . "', `beschreibung` = '" . $this->beschreibung . "', `ort` = '". $this->ort ."' WHERE `termine`.`id` =".$this->id ."";
+                    $GLOBALS["db"]->update($sql);
+                }
               //$this->dbCon = null; // Verbindung zur DB wird geschlossen
           } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
               // gecatched und der Fehler ausgegeben.
@@ -189,6 +195,24 @@ public function __construct() {
     /**
      * @return mixed
      */
+    public function getAnfangsdatum()
+    {
+        $tmpstr = substr($this->anfang, 0,10);
+        return $tmpstr;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAnfangszeit()
+    {
+        $tmpstr = substr($this->anfang, 11,8);
+        return $tmpstr;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getEnde()
     {
         return $this->ende;
@@ -200,6 +224,24 @@ public function __construct() {
     public function setEnde($ende)
     {
         $this->ende = $ende;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEnddatum()
+    {
+        $tmpstr = substr($this->ende, 0,10);
+        return $tmpstr;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEndzeit()
+    {
+        $tmpstr = substr($this->anfang, 11,8);
+        return $tmpstr;
     }
 
     /**
@@ -296,22 +338,6 @@ public function __construct() {
     public function setFarbe($farbe)
     {
         $this->farbe = $farbe;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGruppe()
-    {
-        return $this->gruppe;
-    }
-
-    /**
-     * @param mixed $farbe
-     */
-    public function setGruppe($gruppe)
-    {
-        $this->gruppe = $gruppe;
     }
 
 }

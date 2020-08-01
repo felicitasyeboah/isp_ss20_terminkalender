@@ -11,18 +11,32 @@ if (isset($_GET["id"])) {
   $tempid = $_GET["id"];
 
   $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
-  //......
+  $beschreibung = ($termin->getBeschreibung() !== null) ? $termin->getBeschreibung() : "";
+  $anfangsdatum = ($termin->getAnfangsdatum() !== null) ? $termin->getAnfangsdatum(): date('Y-m-d');
+  $anfangszeit = ($termin->getAnfangszeit() !== null) ? $termin->getAnfangszeit(): $defaultTime;
+  $enddatum = ($termin->getEnddatum() !== null) ? $termin->getEnddatum() : date('Y-m-d');
+  $endzeit = ($termin->getEndzeit() !== null) ? $termin->getEndzeit(): $ganztagTime;
+  $ort = ($termin->getOrt() !== null) ? $termin->getOrt() : "";
+  $kategorie = $db->getAllKategorien();
+  $katVal = ($termin->getKategorieId() !== null) ? $termin->getKategorieId() : "";
+  $katColor = ($termin->getKategorie()->getFarbe());
+  echo "kategorie: " . $katVal;
+  echo "KatColor :" . $katColor;
 }
 else {
-  $plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
-  $defaultTime = "00:00";
+  //$plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
+    $defaultTime = "00:00";
+    $ganztagTime = "23:59";
   $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
   $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
   $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
   $anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : $defaultTime;
-  $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : $plusEinTag;
-  $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $defaultTime;
+  $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : date('Y-m-d');
+  $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $ganztagTime;
   $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
+  $kategorie = $db->getAllKategorien();
+  $katVal = "";
+  $katColor = "#ffffff";
   $tempid = "";
 }
 
@@ -43,15 +57,15 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
                                                 value="1" checked onclick="setTime(this)"><br><br></label>
         <label>Ort:<var>* </var><input size="50px" type="text" name="ort" value="' . $ort . '"><br><br></label>
 
-        <label>Category: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)"/>
+        <label>Kategorie: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)" value="'. $katVal.'"/>
             <datalist id="kategorieName">
-            //Vorhandende Kategorien werden aus der Database geladen' . $db->getAllKategorien() . '
+            //Vorhandende Kategorien werden aus der Database geladen' . $kategorie . '
                  
             </datalist>
         </label>
 
         <label for="farbe"> Farbe:</label>
-        <input type="color" id="farbe" name="farbe" value="#ffffff">
+        <input type="color" id="farbe" name="farbe" value="' . $katColor . '">
         <br/>
         <br/>
         <br/>
@@ -92,7 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $ende = $_POST['enddatum'] . " " . $_POST['endzeit'] . ":00";
         echo $ende;
         $factory = new EventFactory();
-        $termine = $factory->createEvent($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+        $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+        //$termin = $factory->createEvent($_POST['tempid'],$_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+        /*if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
+            $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
+        }
+
+        $termin->addEvent();*/
 
         
         //\\ wurde eine neue Category eingegeben?

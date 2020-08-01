@@ -9,7 +9,7 @@ class EventFactory
           
     }
 
-    public function createEvent($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
+    public function createEvent($tempid,$titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
       $events = [];
       $gruppe = null;
@@ -24,7 +24,7 @@ class EventFactory
         $gruppe = md5(uniqid());
         echo "!! " . $gruppe . " !!";
       }
-      
+
       for ($i = 0; $i <= $interval->days; $i++) {
         $event = new Event();
 
@@ -43,7 +43,12 @@ class EventFactory
                   $event->setFarbe($farbe);
               }
             }
-        } 
+        }
+        if($tempid != "") {
+            $event->setId($tempid);
+        }
+
+
         $date1->add(new DateInterval('P1D'));
         array_push($events, $event);
       }
@@ -51,7 +56,16 @@ class EventFactory
       return $events;
     }
 
-    public function getEvent($id) {
+    public function updateEvent()
+    {
+        //$sql = "UPDATE buecher SET $spalte = (?) WHERE buecher . id = $id";
+        //UPDATE `termine` SET `ort` = 'geaenderter Ort' WHERE `termine`.`id` = 5
+        //$sql = "UPDATE `termine` SET `ort` = 'geaenderter Ort' WHERE `termine`.`id` = 5";
+
+    }
+
+    public function getEvent($id)
+    {
 
       $sql = "SELECT * FROM `termine` WHERE `id` = " . $id . "";
       $event = $GLOBALS["db"]->selectObj($sql, "Event");
