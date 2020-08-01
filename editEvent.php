@@ -92,15 +92,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $ende = $_POST['enddatum'] . " " . $_POST['endzeit'] . ":00";
         echo $ende;
         $factory = new EventFactory();
-        $termin = $factory->createEvent($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
+        $termine = $factory->createEvent($_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
         
         //\\ wurde eine neue Category eingegeben?
-        if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
+        foreach ($termine as &$termin) {
+          if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
             $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
+          }
+          $termin->addEvent();
         }
 
-        $termin->addEvent();
         $ausgabe .= '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>' . $formular;
         //}
     }

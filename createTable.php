@@ -16,13 +16,14 @@ try {
         `titel` VARCHAR(65) NOT NULL , 
         `beschreibung` TEXT , 
         `ort` VARCHAR(65) ,
-        `farbe` CHAR(7) ,  
+        `farbe` CHAR(7) ,
+        `gruppe` CHAR(32) ,
         `kategorieid` INT , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";
     if ($dbinst->exec($createTable)) {
         echo "Tabelle Termine angelegt.";
     }
-    $sql = "INSERT INTO `termine` (`id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES (NULL, '2020-07-15 07:00:00', '2020-07-15 09:00:00', '0', 'Zweiter Testtermin', 'Das ist der zweite Testtermin, der über die php-funktion eingetragen wurde', 'da wo ich wohne', '1');";
+    $sql = "INSERT INTO `termine` (`id`, `anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES (NULL, '2020-08-15 07:00:00', '2020-08-15 09:00:00', '0', 'Zweiter Testtermin', 'Das ist der zweite Testtermin, der über die php-funktion eingetragen wurde', 'da wo ich wohne', '1');";
     if ($dbinst->exec($sql)) {
         echo "TestTermin erfolgreich eingetragen.";
     }

@@ -11,25 +11,44 @@ class EventFactory
 
     public function createEvent($titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
-      $event = new Event();
+      $events = [];
+      $gruppe = null;
 
-      $event->setAnfang($anfang);
-      $event->setEnde($ende);
-      $event->setTitel($titel);
-      $event->setBeschreibung($beschreibung);
-      $event->setOrt($ort);
-      $event->setGanztag($ganztag);
-      $event->setKategorieid($kategorieid);
-      if($event->getKategorieid() !== '') {
-          $event->setKategorie($GLOBALS["db"]->getKategorie($event->getKategorieid()));
-          if($event->getKategorie() !== null) {
-            if($event->getKategorie()->getFarbe() !== $farbe) {
-                $event->setFarbe($farbe);
+      //\\ Intervall ausrechnen, um zu prüfen, ob wir mehrere Tage haben
+      $date1 = new DateTime($anfang);
+      $date2 = new DateTime($ende);
+      $interval = $date1->diff($date2);
+
+      //\\ einen eindeutigen Bezeichner für die Gruppe erstellen
+      if($interval->days > 0) {
+        $gruppe = md5(uniqid());
+        echo "!! " . $gruppe . " !!";
+      }
+      
+      for ($i = 0; $i <= $interval->days; $i++) {
+        $event = new Event();
+
+        $event->setAnfang($date1->format('Y-m-d H:i:s'));
+        $event->setEnde($date1->format('Y-m-d H:i:s'));
+        $event->setTitel($titel);
+        $event->setBeschreibung($beschreibung);
+        $event->setOrt($ort);
+        $event->setGanztag($ganztag);
+        if(isset($gruppe)) $event->setGruppe($gruppe);
+        $event->setKategorieid($kategorieid);
+        if($event->getKategorieid() !== '') {
+            $event->setKategorie($GLOBALS["db"]->getKategorie($event->getKategorieid()));
+            if($event->getKategorie() !== null) {
+              if($event->getKategorie()->getFarbe() !== $farbe) {
+                  $event->setFarbe($farbe);
+              }
             }
-          }
+        } 
+        $date1->add(new DateInterval('P1D'));
+        array_push($events, $event);
       }
 
-      return $event;
+      return $events;
     }
 
     public function getEvent($id) {
