@@ -78,18 +78,16 @@ class EventFactory
     /** FERTIG
      * Events an einem Tag holen
      */
-    public function getEventsonDay($jahr, $monat, $tag)
+    public function getEventsonDay($jahr, $monat, $tag, $kategorie = null)
     {
         $events = [];
 
         $sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
         $events = $GLOBALS["db"]->selectObj($sql, "Event");
 
-        /*foreach ($result as &$event) {
-          $termin = $this->createEvent($event['titel'], $event['beschreibung'], $event['anfang'], $event['ende'], $event['ort'], $event['kategorieid'], $event['farbe'], $event['ganztag']);
-          array_push($events, $termin);
+        if($kategorie !== 0) {
+          array_filter($events, function ($element) use ($kategorie) { return ($element != $kategorie); } );
         }
-        unset($event); // Entferne die Referenz auf das letzte Elemen*/
         
         return $events;
 

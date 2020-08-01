@@ -101,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
 
         //Datum und Zeit für Eintrag in Database vorbereiten
-        $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'] . ":00";
+        $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'];// . ":00";
         echo $anfang;
-        $ende = $_POST['enddatum'] . " " . $_POST['endzeit'] . ":00";
+        $ende = $_POST['enddatum'] . " " . $_POST['endzeit'];// . ":00";
         echo $ende;
         $factory = new EventFactory();
         $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);

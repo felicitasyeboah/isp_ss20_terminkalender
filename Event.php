@@ -32,6 +32,7 @@ class Event
     private $kategorieid;
     private $kategorie; //\\ Objekt der Klasse "Category"
     private $farbe;
+    private $gruppe;
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
 public function __construct() {
@@ -71,19 +72,26 @@ public function __construct() {
             }
              //gibt es einen Termin noch nicht, dann eintragen
                 if ($this->getId() == "") {
-                    $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
-                    if ($this->kategorieid === null) {
-                        $sql .= "NULL)";
+                    $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
+                    if($this->kategorieid === null) {
+                      $sql .= "NULL";
                     } else {
-                        $sql .= $this->kategorieid . ")";
+                      $sql .= $this->kategorieid;
                     }
+                    if($this->gruppe === null) {
+                      $sql .= ",NULL)";
+                    } else {
+                      $sql .= ",'" . $this->gruppe . "')";
+                    }
+
                     //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
                     //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
                     $GLOBALS["db"]->insert($sql);
                     echo "Event wurde in der Database eingetragen.<br/>";
                     //sonst Termin bereits vorhanden, dann Updaten
                 } else {
-                    $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = '$this->ende', `ganztag` = '. $this->ganztag .', `titel` = '" . $this->titel . "', `beschreibung` = '" . $this->beschreibung . "', `ort` = '". $this->ort ."' WHERE `termine`.`id` =".$this->id ."";
+                    $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "', `beschreibung` = '" . $this->beschreibung . "', `ort` = '". $this->ort ."' WHERE `termine`.`id` =".$this->id ."";
+                    echo $sql;
                     $GLOBALS["db"]->update($sql);
                 }
               //$this->dbCon = null; // Verbindung zur DB wird geschlossen
@@ -338,6 +346,22 @@ public function __construct() {
     public function setFarbe($farbe)
     {
         $this->farbe = $farbe;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGruppe()
+    {
+        return $this->gruppe;
+    }
+
+    /**
+     * @param mixed $farbe
+     */
+    public function setGruppe($gruppe)
+    {
+        $this->gruppe = $gruppe;
     }
 
 }
