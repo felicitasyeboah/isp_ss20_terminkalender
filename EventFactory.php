@@ -22,8 +22,10 @@ class EventFactory
       $event->setKategorieid($kategorieid);
       if($event->getKategorieid() !== '') {
           $event->setKategorie($GLOBALS["db"]->getKategorie($event->getKategorieid()));
-          if($event->getKategorie()->getFarbe() !== $farbe) {
-              $event->setFarbe($farbe);
+          if($event->getKategorie() !== null) {
+            if($event->getKategorie()->getFarbe() !== $farbe) {
+                $event->setFarbe($farbe);
+            }
           }
       }
 
@@ -47,18 +49,14 @@ class EventFactory
         $events = [];
 
         $sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
-        $result = $GLOBALS["db"]->select($sql);
+        $events = $GLOBALS["db"]->selectObj($sql, "Event");
 
-        foreach ($result as &$event) {
+        /*foreach ($result as &$event) {
           $termin = $this->createEvent($event['titel'], $event['beschreibung'], $event['anfang'], $event['ende'], $event['ort'], $event['kategorieid'], $event['farbe'], $event['ganztag']);
-
           array_push($events, $termin);
-      }
-
-      unset($event); // Entferne die Referenz auf das letzte Elemen
+        }
+        unset($event); // Entferne die Referenz auf das letzte Elemen*/
         
-        //Event Objekte machen
-
         return $events;
 
     } // Ende Funktion getEventsonDay()

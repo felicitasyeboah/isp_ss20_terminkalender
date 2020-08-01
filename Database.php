@@ -2,6 +2,7 @@
 
 require_once "dbConf.php";
 require_once "Category.php";
+require_once "Event.php";
 
 //Globale Varable für ein Datenbankobjekt.
 $db = new Database(MYSQL_DB, MYSQL_HOST, MYSQL_BENUTZER, MYSQL_KENNWORT);
@@ -31,6 +32,14 @@ class Database
                               
       if ($statement->execute()) {
         return $statement->fetchAll();
+      }
+    }
+
+    public function selectObj($sql, $class) {
+      $statement = $this->dbCon->prepare($sql);
+
+      if ($statement->execute()) {
+        return $statement->fetchAll(PDO::FETCH_CLASS, $class);
       }
     }
 

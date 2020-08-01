@@ -45,10 +45,10 @@ public function __construct() {
       {
           try {
             if($this->kategorie !== null) {
-              if($this->kategorie->id === null) {
-                if($this->kategorie->name !== '') {            
+              if($this->kategorie->getId() === null) {
+                if($this->kategorie->getName() !== '') {            
                   //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
-                  $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->name . "','" . $this->kategorie->farbe . "')"; //SQL Statement
+                  $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
                   $GLOBALS["db"]->insert($sql);
                   //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
                   //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
@@ -62,7 +62,12 @@ public function __construct() {
             }
              
   
-              $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES ('" . $this->anfang . "','" . $this->ende ."',". $this->ganztag .",'" . $this->titel . "','" . $this->beschreibung ."','" . $this->ort ."'," . $this->kategorieid . ")"; //SQL Statement
+              $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`) VALUES ('" . $this->anfang . "','" . $this->ende ."',". $this->ganztag .",'" . $this->titel . "','" . $this->beschreibung ."','" . $this->ort ."',"; //SQL Statement
+              if($this->kategorieid === null) {
+                $sql .= "NULL)";
+              } else {
+                $sql .= $this->kategorieid . ")";
+              }
               //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
               //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
               $GLOBALS["db"]->insert($sql);
