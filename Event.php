@@ -109,10 +109,10 @@ public function __construct() {
       $html .= '<span class="eventTitle">' . $this->titel . '</span>';
       $html .= '</th>';
       $html .= '<td>';
-      $html .= '<img class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id='. $this->id .'\')"></img>';
+      $html .= '<div class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id='. $this->id .'\')"></div>';
       $html .= '</td>';
       $html .= '<td>';
-      $html .= '<img class="eventLink ico_del" onclick="window.location.replace(\'Event.php\?delete&id='. $this->id .'\')"></img>';
+      $html .= '<div class="eventLink ico_del" onclick="window.location.replace(\'Event.php\?delete&id='. $this->id .'\')"></div>';
       $html .= '</td>';
       $html .= '</tr>';
       $html .= '</tbody></table>';
