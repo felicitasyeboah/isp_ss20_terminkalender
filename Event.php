@@ -1,12 +1,14 @@
 <?php
 
-require_once("Database.php");
-require_once("Category.php");
+//require_once("Database.php");
+require_once("EventFactory.php");
+//include_once("EventFactory.php");
 
 if (isset($_GET["details"])) {
   $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
   if(isset($id)) {
-    $termin = $GLOBALS["db"]->getEventbyId($id);
+    $factory = new EventFactory();
+    $termin = $factory->getEvent($id)[0];
   }
 
   if(isset($termin)) {

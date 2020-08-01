@@ -35,8 +35,9 @@ class EventFactory
     public function getEvent($id) {
 
       $sql = "SELECT * FROM `termine` WHERE `id` = " . $id . "";
-      $result = $GLOBALS["db"]->select($sql);
-      $event = $this->createEvent($result['titel'], $result['beschreibung'], $result['anfang'], $result['ende'], $result['ort'], $result['kategorieid'], $result['farbe'], $result['ganztag']);
+      $event = $GLOBALS["db"]->selectObj($sql, "Event");
+      //$result = $GLOBALS["db"]->select($sql);
+      //$event = $this->createEvent($result['titel'], $result['beschreibung'], $result['anfang'], $result['ende'], $result['ort'], $result['kategorieid'], $result['farbe'], $result['ganztag']);
 
       return $event;
     }
@@ -61,7 +62,7 @@ class EventFactory
 
     } // Ende Funktion getEventsonDay()
 
-    public function getEventbyId($id) : Event {
+    /*public function getEventbyId($id) : Event {
 
       $event = NULL;
 
@@ -74,7 +75,7 @@ class EventFactory
       }
 
       return ($event) ? $event : NULL;
-    }
+    }*/
 
     public function getEventsforCategory($category)
     {

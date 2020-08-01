@@ -1,7 +1,7 @@
 <?php
 
 include "Database.php";
-include "EventFactory.php";
+//include "EventFactory.php";
 
 class Kalender
 {

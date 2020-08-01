@@ -130,9 +130,6 @@
       
       if (XHR.readyState == 4 && XHR.status == 200) {
         document.getElementById("event").innerHTML = this.responseText;
-        //document.getElementById("event").appendChild(document.createElement("td")).setAttribute("id", "anzeige");
-        //document.getElementById("anzeige").setAttribute("colspan", "10");
-
       }
     }
 
