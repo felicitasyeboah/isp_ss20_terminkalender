@@ -5,22 +5,22 @@ require_once("EventFactory.php");
 //include_once("EventFactory.php");
 
 if (isset($_GET["details"]) || isset($_GET["delete"])) {
-  $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
-  if(isset($id)) {
-    $factory = new EventFactory();
-    $termin = $factory->getEvent($id)[0];
-  }
+    $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
+    if (isset($id)) {
+        $factory = new EventFactory();
+        $termin = $factory->getEvent($id)[0];
+    }
 
-  if(isset($termin) && isset($_GET["details"])) {
-    echo $termin->toHTMLDetails();
-  }
+    if (isset($termin) && isset($_GET["details"])) {
+        echo $termin->toHTMLDetails();
+    }
 
-  if(isset($termin) && isset($_GET["delete"])) {
-    $termin->deleteEvent();
-    $ausgabe = "Termin " . $termin->getTitel() . " erfolgreich gelöscht!";
-    $ausgabe .= '</br> <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
-    echo $ausgabe;
-  }
+    if (isset($termin) && isset($_GET["delete"])) {
+        $termin->deleteEvent();
+        $ausgabe = "Termin " . $termin->getTitel() . " erfolgreich gelöscht!";
+        $ausgabe .= '</br> <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
+        echo $ausgabe;
+    }
 }
 
 class Event
@@ -42,85 +42,128 @@ class Event
     private $gruppe;
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
-public function __construct() {
+    public function __construct()
+    {
         //\\ holen des Category-Datensatzes für diesen Event
-        if(isset($this->kategorieid)) {
+        if (isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
         }
-      }
+    }
 
-      public function addKategorie($name, $farbe) {
+    public function addKategorie($name, $farbe)
+    {
         $this->kategorie = new Category();
         $this->kategorie->addDetails($name, $farbe);
-      }
+    }
 
 
-      public function addEvent()
-      {
-          try {
-            if($this->kategorie !== null) {
-              if($this->kategorie->getId() === null) {
-                if($this->kategorie->getName() !== '') {            
-                  //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
-                  if($this->getId() == "") {
-                      $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
-                      $GLOBALS["db"]->insert($sql);
-                      echo "Neue Category wurde in der Database eingetragen.<br/>";
-                  } else {
-                      //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                      //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
-                      $this->kategorieid = $GLOBALS["db"]->getlastId();
-                  }
-                }
-              }
-            }
-            else {
-              $this->kategorieid = null;
-            }
-             //gibt es einen Termin noch nicht, dann eintragen
-                if ($this->getId() == "") {
-                    $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
-                    if($this->kategorieid === null) {
-                      $sql .= "NULL";
-                    } else {
-                      $sql .= $this->kategorieid;
+    public function addEvent()
+    {
+        try {
+            if ($this->kategorie !== null) {
+                if ($this->kategorie->getId() === null) {
+                    if ($this->kategorie->getName() !== '') {
+                        //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
+
+                        $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
+                        $GLOBALS["db"]->insert($sql);
+                        echo "Neue Category wurde in der Database eingetragen.<br/>";
+
+                        //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                        //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
+                        $this->kategorieid = $GLOBALS["db"]->getlastId();
+
                     }
-                    if($this->gruppe === null) {
-                      $sql .= ",NULL)";
-                    } else {
-                      $sql .= ",'" . $this->gruppe . "')";
-                    }
-
-                    //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                    //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
-                    $GLOBALS["db"]->insert($sql);
-                    echo "Event wurde in der Database eingetragen.<br/>";
-                    //sonst Termin bereits vorhanden, dann Updaten
-                } else {
-                    $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "', `beschreibung` = '" . $this->beschreibung . "', `ort` = '". $this->ort ."' WHERE `termine`.`id` =".$this->id ."";
-                    $GLOBALS["db"]->update($sql);
                 }
-              //$this->dbCon = null; // Verbindung zur DB wird geschlossen
-          } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
-              // gecatched und der Fehler ausgegeben.
-              echo "Fehler: " . $e->getMessage();
-          }
-      }
+            } else {
+                $this->kategorieid = null;
+            }
+            //gibt es einen Termin noch nicht, dann eintragen
 
-      public function deleteEvent() {
+            $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
+            if ($this->kategorieid === null) {
+                $sql .= "NULL";
+            } else {
+                $sql .= $this->kategorieid;
+            }
+            if ($this->gruppe === null) {
+                $sql .= ",NULL)";
+            } else {
+                $sql .= ",'" . $this->gruppe . "')";
+            }
+
+            //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+            //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
+            $GLOBALS["db"]->insert($sql);
+            echo "Event wurde in der Database eingetragen.<br/>";
+            //$this->dbCon = null; // Verbindung zur DB wird geschlossen
+        } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
+            // gecatched und der Fehler ausgegeben.
+            echo "Fehler: " . $e->getMessage();
+        }
+    }
+
+    public function deleteEvent()
+    {
         $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
         $GLOBALS["db"]->delete($sql);
-      }
+    }
 
-    public function __set($name, $value) {}
+    public function updateEvent()
+    {
+        if ($this->kategorie !== null) {
+            if ($this->kategorie->getId() === null) {
+                if ($this->kategorie->getName() !== '') {
+                    /*$sql = "UPDATE `kategorie` SET `name` ='" . $this->kategorie->getName() .  "', `farbe` = '" . $this->kategorie->getFarbe() . "' WHERE `kategorie`.`id` =". $this->kategorieid.""; //SQL Statement
+                    echo $sql;
+                    $GLOBALS["db"]->update($sql);
+                    echo "Neue Category wurde in der Database eingetragen.<br/>";*/
+
+                    $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
+                    $GLOBALS["db"]->insert($sql);
+                    echo "Neue Category wurde in der Database eingetragen.<br/>";
+
+                    //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
+                    //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
+                    $this->kategorieid = $GLOBALS["db"]->getlastId();
+
+                }
+            }
+        } else {
+            $this->kategorieid = null;
+        }
+        $tmpKat = "";
+        $tmpGru = "";
+        if ($this->kategorieid === null) {
+            $tmpKat = "NULL";
+        } else {
+            $tmpKat = $this->kategorieid;
+        }
+        if ($this->gruppe === null) {
+            $tmpGru = "NULL";
+        } else {
+            $tmpGru = $this->gruppe;
+        }
+        $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "'
+        , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = '" . $tmpKat . "' , `gruppe` = '" . $tmpGru . "'WHERE `termine`.`id` =" . $this->id . "";
+
+
+        echo $sql;
+        $GLOBALS["db"]->update($sql);
+    }
+
+    public function __set($name, $value)
+    {
+    }
     //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
     //public function __get($name) {return $this->$name;}
 
     //\\ gibt den Event in HTML-Ansicht zurück
-    public function toHTML(): string {
-        $html  = '<div class="event"';
-        if(isset($this->kategorie) && !isset($this->farbe)) $html .= ' style="border-top: Solid 6px '. $this->kategorie->farbe . '"';
-        if(isset($this->farbe)) $html .= ' style="border-top: Solid 12px '. $this->farbe . '"';
+    public function toHTML(): string
+    {
+        $html = '<div class="event"';
+        if (isset($this->kategorie) && !isset($this->farbe)) $html .= ' style="border-top: Solid 6px ' . $this->kategorie->farbe . '"';
+        if (isset($this->farbe)) $html .= ' style="border-top: Solid 12px ' . $this->farbe . '"';
         $html .= 'id="' . $this->id . '"';
         $html .= 'title="' . $this->beschreibung . '&#013;' . $this->ort . '"';
         $html .= ' onClick="zeigeEvent(' . $this->id . ')" ';
@@ -129,37 +172,38 @@ public function __construct() {
         return $html;
     }
 
-    public function toHTMLDetails() : string {
-      //\\ Kopfzeile / Navigation
-      $html  = '<tr><td colspan="10">';
-      $html .= '<table id="eventNav"';
-      if(isset($this->kategorie)) $html .= ' style="background-color: ' . $this->kategorie->farbe . '"'; 
-      $html .= '"><tbody><tr>';
-      $html .= '<th>';
-      $html .= '<span class="eventTitle">' . $this->titel . '</span>';
-      $html .= '</th>';
-      $html .= '<td>';
-      $html .= '<div class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id='. $this->id .'\')"></div>';
-      $html .= '</td>';
-      $html .= '<td>';
-      $html .= '<div class="eventLink ico_del" onclick="window.location.replace(\'Event.php\?delete&id='. $this->id .'\')"></div>';
-      $html .= '</td>';
-      $html .= '</tr>';
-      $html .= '</tbody></table>';
+    public function toHTMLDetails(): string
+    {
+        //\\ Kopfzeile / Navigation
+        $html = '<tr><td colspan="10">';
+        $html .= '<table id="eventNav"';
+        if (isset($this->kategorie)) $html .= ' style="background-color: ' . $this->kategorie->farbe . '"';
+        $html .= '"><tbody><tr>';
+        $html .= '<th>';
+        $html .= '<span class="eventTitle">' . $this->titel . '</span>';
+        $html .= '</th>';
+        $html .= '<td>';
+        $html .= '<div class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id=' . $this->id .'\')"></div>';
+        $html .= '</td>';
+        $html .= '<td>';
+        $html .= '<div class="eventLink ico_del" onclick="window.location.replace(\'Event.php\?delete&id=' . $this->id . '\')"></div>';
+        $html .= '</td>';
+        $html .= '</tr>';
+        $html .= '</tbody></table>';
 
-      //\\ EventDetails
-      $html .= '<div id="eventDetails">';
-      $html .= $this->anfang . ' - ' . $this->ende . '</br>';
-      $html .= $this->beschreibung . '</br>';
-      $html .= $this->ort . '</br>';
-      if(isset($this->kategorie)) $html .= $this->kategorie->name . '</br>';
+        //\\ EventDetails
+        $html .= '<div id="eventDetails">';
+        $html .= $this->anfang . ' - ' . $this->ende . '</br>';
+        $html .= $this->beschreibung . '</br>';
+        $html .= $this->ort . '</br>';
+        if (isset($this->kategorie)) $html .= $this->kategorie->name . '</br>';
 
-      $html .= '</div>';
+        $html .= '</div>';
 
-      //\\ Abschluss
-      $html .= '</td>';
+        //\\ Abschluss
+        $html .= '</td>';
 
-      return $html;
+        return $html;
     }
 
     /**
@@ -215,7 +259,7 @@ public function __construct() {
      */
     public function getAnfangsdatum()
     {
-        $tmpstr = substr($this->anfang, 0,10);
+        $tmpstr = substr($this->anfang, 0, 10);
         return $tmpstr;
     }
 
@@ -224,7 +268,7 @@ public function __construct() {
      */
     public function getAnfangszeit()
     {
-        $tmpstr = substr($this->anfang, 11,8);
+        $tmpstr = substr($this->anfang, 11, 8);
         return $tmpstr;
     }
 
@@ -249,7 +293,7 @@ public function __construct() {
      */
     public function getEnddatum()
     {
-        $tmpstr = substr($this->ende, 0,10);
+        $tmpstr = substr($this->ende, 0, 10);
         return $tmpstr;
     }
 
@@ -258,7 +302,7 @@ public function __construct() {
      */
     public function getEndzeit()
     {
-        $tmpstr = substr($this->anfang, 11,8);
+        $tmpstr = substr($this->anfang, 11, 8);
         return $tmpstr;
     }
 

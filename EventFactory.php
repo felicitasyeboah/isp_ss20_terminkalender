@@ -27,7 +27,6 @@ class EventFactory
 
       for ($i = 0; $i <= $interval->days; $i++) {
         $event = new Event();
-
         $event->setAnfang($date1->format('Y-m-d H:i:s'));
         $event->setEnde($date1->format('Y-m-d H:i:s'));
         $event->setTitel($titel);

@@ -5,39 +5,47 @@ $ausgabe = '';
 //date('Y-m-d')
 //date('H:i')
 //date('H:i', time() + 3600)
+$defaultTime = "00:00";
+$ganztagTime = "23:59";
 if (isset($_GET["id"])) {
-  $factory = new EventFactory();
-  $termin = $factory->getEvent($_GET["id"])[0];
-  $tempid = $_GET["id"];
+    $factory = new EventFactory();
+    $termin = $factory->getEvent($_GET["id"])[0];
+    $tempid = $_GET["id"];
+    //$tempcolor = $_GET["color"];
 
-  $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
-  $beschreibung = ($termin->getBeschreibung() !== null) ? $termin->getBeschreibung() : "";
-  $anfangsdatum = ($termin->getAnfangsdatum() !== null) ? $termin->getAnfangsdatum(): date('Y-m-d');
-  $anfangszeit = ($termin->getAnfangszeit() !== null) ? $termin->getAnfangszeit(): $defaultTime;
-  $enddatum = ($termin->getEnddatum() !== null) ? $termin->getEnddatum() : date('Y-m-d');
-  $endzeit = ($termin->getEndzeit() !== null) ? $termin->getEndzeit(): $ganztagTime;
-  $ort = ($termin->getOrt() !== null) ? $termin->getOrt() : "";
-  $kategorie = $db->getAllKategorien();
-  $katVal = ($termin->getKategorieId() !== null) ? $termin->getKategorieId() : "";
-  $katColor = ($termin->getKategorie()->getFarbe());
-  echo "kategorie: " . $katVal;
-  echo "KatColor :" . $katColor;
-}
-else {
-  //$plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
-    $defaultTime = "00:00";
-    $ganztagTime = "23:59";
-  $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
-  $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
-  $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
-  $anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : $defaultTime;
-  $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : date('Y-m-d');
-  $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $ganztagTime;
-  $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
-  $kategorie = $db->getAllKategorien();
-  $katVal = "";
-  $katColor = "#ffffff";
-  $tempid = "";
+    $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
+    $beschreibung = ($termin->getBeschreibung() !== null) ? $termin->getBeschreibung() : "";
+    $anfangsdatum = ($termin->getAnfangsdatum() !== null) ? $termin->getAnfangsdatum() : date('Y-m-d');
+    $anfangszeit = ($termin->getAnfangszeit() !== null) ? $termin->getAnfangszeit() : $defaultTime;
+    $enddatum = ($termin->getEnddatum() !== null) ? $termin->getEnddatum() : date('Y-m-d');
+    $endzeit = ($termin->getEndzeit() !== null) ? $termin->getEndzeit() : $ganztagTime;
+    $ort = ($termin->getOrt() !== null) ? $termin->getOrt() : "";
+    $kategorie = $db->getAllKategorien();
+
+    $katVal = ($termin->getKategorieId() !== null) ? $termin->getKategorieId() : "";
+    $katId = $termin->getKategorieId();
+    if(!empty($katId)) {
+        $katColor = $termin->getKategorie()->getFarbe();
+    } else {
+        $katColor = "#ffffff";
+    }
+    //$katColor = ($termin->getKategorie()->getFarbe()!== null) ? $termin->getKategorie()->getFarbe() : null ;
+
+
+} else {
+    //$plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
+
+    $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
+    $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
+    $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
+    $anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : $defaultTime;
+    $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : date('Y-m-d');
+    $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $ganztagTime;
+    $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
+    $kategorie = $db->getAllKategorien();
+    $katVal = "";
+    $katColor = "#ffffff";
+    $tempid = "";
 }
 
 
@@ -57,7 +65,7 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
                                                 value="1" checked onclick="setTime(this)"><br><br></label>
         <label>Ort:<var>* </var><input size="50px" type="text" name="ort" value="' . $ort . '"><br><br></label>
 
-        <label>Kategorie: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)" value="'. $katVal.'"/>
+        <label>Kategorie: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)" value="' . $katVal . '"/>
             <datalist id="kategorieName">
             //Vorhandende Kategorien werden aus der Database geladen' . $kategorie . '
                  
@@ -89,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         echo "Ort: " . $_POST['ort'];
         $ausgabe = 'Ort darf nur Buchstaben und "-" enthalten,' . $formular;
     } elseif (strlen($_POST["beschreibung"]) > 500) {
-        echo 'Beschreibung ist zu lang. Max. 500 Zeichen.'. $formular;
+        echo 'Beschreibung ist zu lang. Max. 500 Zeichen.' . $formular;
 
         //Wenn Eingaben in Ordnung
     } else {
@@ -105,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         echo $anfang;
         $ende = $_POST['enddatum'] . " " . $_POST['endzeit'];// . ":00";
         echo $ende;
+        echo "TempID2: " . $tempid;
         $factory = new EventFactory();
         $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
         //$termin = $factory->createEvent($_POST['tempid'],$_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
@@ -114,14 +123,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         $termin->addEvent();*/
 
-        
+
         //\\ wurde eine neue Category eingegeben?
         foreach ($termine as &$termin) {
-          if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
-            $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
-          }
-          $termin->addEvent();
+            if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
+                $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
+            }
+         if($_POST['tempid'] == "") {
+             $termin->addEvent();
+         }
+         else {
+             $termin->updateEvent();
+         }
         }
+
 
         $ausgabe .= '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>' . $formular;
         //}
@@ -195,7 +210,7 @@ include "inc/footer.inc.php";
     function setTime(element) {
         var jetzt = new Date();
         var inEinerStunde = new Date();
-        var morgen = new Date();
+        var ganztag = new Date();
 
         //Aktuelles Datum
         var datum = jetzt.getFullYear() + "-" + fuehrendeNull(jetzt.getMonth() + 1) + "-" + fuehrendeNull(jetzt.getDate());
@@ -207,15 +222,20 @@ include "inc/footer.inc.php";
         inEinerStunde.setHours(inEinerStunde.getHours() + 1)
         var uhrzeitPlus = fuehrendeNull(inEinerStunde.getHours()) + ":" + fuehrendeNull(inEinerStunde.getMinutes());
 
-        //setz den aktuellen Tag einen Tag weiter
-        morgen.setDate(morgen.getDate() + 1)
-        var datumPlus = morgen.getFullYear() + "-" + fuehrendeNull(morgen.getMonth() + 1) + "-" + fuehrendeNull(morgen.getDate());
+        // Setz ganztag event
+        ganztag.setHours(23)
+        ganztag.setMinutes(59)
+        var timeGanztag = fuehrendeNull(ganztag.getHours()) + ":" + fuehrendeNull(ganztag.getMinutes())
+        //ganztag.setDate(morgen.getDate() + 1)
+        console.log(ganztag.getDate())
+        console.log(ganztag.getDate())
+        //var datumPlus = ganztag.getFullYear() + "-" + fuehrendeNull(ganztag.getMonth() + 1) + "-" + fuehrendeNull(ganztag.getDate());
 
         if (element.checked) {
             document.getElementById("anfangszeit").setAttribute("value", "00:00")
-            document.getElementById("endzeit").setAttribute("value", "00:00")
+            document.getElementById("endzeit").setAttribute("value", timeGanztag)
             document.getElementById("anfangsdatum").setAttribute("value", datum);
-            document.getElementById("enddatum").setAttribute("value", datumPlus);
+            document.getElementById("enddatum").setAttribute("value", datum);
 
         } else {
             document.getElementById("anfangszeit").setAttribute("value", uhrzeit);
@@ -226,7 +246,7 @@ include "inc/footer.inc.php";
         console.log('geht');
     }
 
-   //Farbe wird passen zu ausgewählten Category aktualisiert (mit Ajax)
+    //Farbe wird passen zu ausgewählten Category aktualisiert (mit Ajax)
     function loadColor(id) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
