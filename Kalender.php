@@ -165,14 +165,14 @@ class Kalender
         //Tag-Counter
         $tagCounter = 1;
         $counter = $tagCounter;
-        while ($this->startWeek <= $this->endWeek) {
+        while ($counter <= $this->endWeek) {
 
             //Zuruecksetzen vom tagDerWoche Counter
             if ($this->tagDerWoche == 7) {
                 $this->tagDerWoche = 0;
                 $ausgabe .= '</tr><tr>';
             }
-            echo "<br>";
+            /*echo "<br>";
             echo "counter: ".$counter;
             echo "<br>";
             echo "tagciounter: ".$tagCounter;
@@ -182,7 +182,7 @@ class Kalender
             echo "startweek: ".$this->startWeek;
             echo "<br>";
             echo "endweek: ".$this->endWeek;
-            echo "<br>";
+            echo "<br>";*/
 
             //\\ TODO: Klassenvergabe dynamisieren bzw. mittels Konstante für diese Klasse
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
