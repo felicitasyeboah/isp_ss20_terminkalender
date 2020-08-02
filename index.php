@@ -13,12 +13,9 @@
     $monat = (int)date('m');
     $jahr = (int)date('Y');
     $woche = (int)date('W');
-    echo $woche;
     if (isset($_GET['m'])) {
       $monat = $_GET['m'];
       $jahr = $_GET['j'];
-      echo "Jahr: " . $jahr;
-      echo "Monat: " . $monat;
       if($_GET['m'] == 0) {
           $monat = 12;
           $jahr = $jahr-1;
@@ -165,15 +162,16 @@
       window.location.replace('editCategory.php\?id=' + kat + '') ;
     }
 
-    function startFilter(j, m) {
+    function startFilter(j, m, w) {
       var kat  = document.getElementById("kategorie").value;
       var show = document.querySelector('input[name="ansicht"]:checked').value;
       //var show = document.getElementById("ansicht").value;
-      var params = 'm=' + m + '&j=' + j;
+      var params = 'm=' + m + '&j=' + j + '&w=' + w;
       params += (kat  !== '') ? '&kat=' + kat + '' : '';
       params += (show !== '') ? '&ansicht=' + show + '' : '';
       window.location.replace('index.php\?' + params);
      }
+
 
     </script>
 

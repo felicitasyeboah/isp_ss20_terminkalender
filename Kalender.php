@@ -56,15 +56,12 @@ class Kalender
          */
         $this->timestamp_montag = strtotime("{$this->jahr}-W{$this->woche}");
         $this->startWeek = (int)date("d", $this->timestamp_montag);
-        echo date("d", $this->timestamp_montag) . '</p>';
 
         /*
          * Sonntag einer Woche
          */
         $this->timestamp_sonntag = strtotime("{$this->jahr}-W{$this->woche}-7");
         $this->endWeek = (int)date("d", $this->timestamp_sonntag);
-        echo (int)date("d", $this->timestamp_sonntag) . '</p>';
-
     }
 
     public function setKatFilter($katId) {
@@ -85,7 +82,7 @@ class Kalender
       $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" value="' . $this->katFilter . '">
           <datalist id="kategorieName"> ' . $kategorie . '</datalist></label>';
       $navBar .= '<div class="infobar eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
-      $navBar .= '<div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ')"></div>';
+      $navBar .= '<div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ',' . $this->woche . ')"></div>';
       $navBar .= '</div>';
       $navBar .= '<div class="ansichtbar">';
       $navBar .= '<input type="radio" id="monat" name="ansicht" value="Monat" ';
@@ -184,25 +181,11 @@ class Kalender
      */
     public function showWeek()
     {
-        /*
-        [seconds] - seconds
-        [minutes] - minutes
-        [hours] - hours
-        [mday] - day of the month
-        [wday] - day of the week (0=Sunday, 1=Monday,...)
-        [mon] - month
-        [year] - year
-        [yday] - day of the year
-        [weekday] - name of the weekday
-        [month] - name of the month
-        [0] - seconds since Unix Epoch
-         */
-
-
-
-        echo 'Show week';
         $ausgabe = '<table id="views">';
-        $ausgabe .= '<caption><a href="index.php?w=' . ($this->woche - 1) . '">vorherige</a>&nbsp;' . date("d.m.Y", $this->timestamp_montag). ' bis ' . date("d.m.Y", $this->timestamp_sonntag) . '&nbsp;<a href="index.php?w=' . ($this->woche + 1) .'">n&auml;chste</a></caption>';
+        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ',' . ($this->woche - 1) . ')"></div><div id="zeitinfo">&nbsp;' . date("d.m.Y", $this->timestamp_montag). ' bis ' . date("d.m.Y", $this->timestamp_sonntag) . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ',' . ($this->woche + 1) . ')"></div>';
+        
+        //\\ Navigation (Filter, Ansichten)
+        $ausgabe .= $this->addNavBar();
 
         $ausgabe .= '<thead><tr>';
         foreach ($this->tageDerWoche as $tag) {
@@ -212,61 +195,28 @@ class Kalender
 
         $ausgabe .= '<tr>';
 
-
-        // Weil unser Kalender am Montag und nicht am Sonntag beginnt
-        if ($this->tagDerWoche == -1) {
-            $this->tagDerWoche = 0;
-        }
-        // Wenn der erste Tag des Monats nicht auf einen Montag faellt
-        // Ersten Tage des Kalenders auffuellen
-        if ($this->tagDerWoche > 0) {
-            $ausgabe .= '<td colspan="' . $this->tagDerWoche . '"</td>';
-        }
         //Tag-Counter
-        $tagCounter = 1;
-        $counter = $tagCounter;
-        while ($counter <= $this->endWeek) {
-
-            //Zuruecksetzen vom tagDerWoche Counter
-            if ($this->tagDerWoche == 7) {
-                $this->tagDerWoche = 0;
-                $ausgabe .= '</tr><tr>';
-            }
-            /*echo "<br>";
-            echo "counter: ".$counter;
-            echo "<br>";
-            echo "tagciounter: ".$tagCounter;
-            echo "<br>";
-            echo "tagderwoche: ".$this->tagDerWoche;
-            echo "<br>";
-            echo "startweek: ".$this->startWeek;
-            echo "<br>";
-            echo "endweek: ".$this->endWeek;
-            echo "<br>";*/
-
-            //\\ TODO: Klassenvergabe dynamisieren bzw. mittels Konstante für diese Klasse
+        $tagCounter = date("d", $this->timestamp_montag);
+        $counter = 1;        
+        while ($counter <= 7) {
+            if($tagCounter > $this->anzahlTage) $tagCounter = 1;
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
             $evfactory = new EventFactory();
-            $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter);
+            $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter, $this->katFilter);
             foreach ($events as &$event) {
                 $ausgabe .= $event->toHTML();
             }
-
             unset($event); // Entferne die Referenz auf das letzte Element
 
             $ausgabe .= '</span></td>';
 
-            //counter hochzaehlen
             $tagCounter++;
-            $this->tagDerWoche++;
             $counter++;
-            $this->startWeek++;
         } // Ende While
 
         $ausgabe .= '<tbody id="event"></tbody>';
-
         $ausgabe .= '</tr></table>';
 
         echo $ausgabe;
