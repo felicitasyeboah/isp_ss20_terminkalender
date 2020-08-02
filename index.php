@@ -48,8 +48,7 @@
     echo '</div>';
     echo '<p></p>';
     // Laedt Seite editEvent.php -->
-    echo '<input type="button" name="addEvent" value="Event hinzufügen" onclick="window.location.replace(\'editEvent.php\')">';
-
+    
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
    echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
         <input type="submit" name="wochenansicht" value="Wochenansicht">
@@ -134,6 +133,11 @@
       if (XHR.readyState == 4 && XHR.status == 200) {
         document.getElementById("event").innerHTML = this.responseText;
       }
+    }
+
+    function zeigeFilter() {
+      var element = document.getElementById("filter");
+      element.classList.toggle("invisible");
     }
 
     </script>
