@@ -25,6 +25,19 @@ class Kalender
         $this->tagDerWoche = $this->infoDatum['wday'] - 1;
     }
 
+    private function addNavBar() {
+      $kategorie = $GLOBALS["db"]->getAllKategorien();
+
+      $navBar = '<div id="nav" class="eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
+      $navBar .= '<div id="nav" class="eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
+      $navBar .= '<div id="filter" class="invisible">';
+      $navBar .= '<label>Kategorie: <input type="text" name="kategorie" list="kategorieName" >
+          <datalist id="kategorieName"> ' . $kategorie . '</datalist></label>';
+
+      return $navBar;
+
+    }
+
     /**
      * Stellt einen Kalender in Monatsansicht dar
      */
@@ -33,7 +46,12 @@ class Kalender
         echo 'Show month';
 
         $ausgabe = '<table id="views">';
-        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
+        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
+
+        //\\ Navigation (Filter, Ansichten)
+        $ausgabe .= $this->addNavBar();
+       
+        $ausgabe .= '</caption>';
 
         $ausgabe .= '<thead><tr>';
         foreach ($this->tageDerWoche as $tag) {
