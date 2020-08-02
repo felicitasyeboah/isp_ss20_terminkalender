@@ -88,9 +88,10 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 //Formular auf sinnvolle/korrekte Eingaben ueberpruefen
-
+    $tmpkat = $_POST['kategorie'];
     $regexTitel = '/^[a-zA-ZüöäÜÖÄß0-9\s\-.!\?]+$/i';
     $regexOrt = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
+    $regexKategorie = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
     if (empty($titel)) {
         $ausgabe = 'Bitte einen Titel eingeben.' . $formular;
     } elseif (!preg_match($regexTitel, $_POST['titel'])) {
@@ -101,7 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $ausgabe = 'Ort darf nur Buchstaben und "-" enthalten,' . $formular;
     } elseif (strlen($_POST["beschreibung"]) > 500) {
         echo 'Beschreibung ist zu lang. Max. 500 Zeichen.' . $formular;
+    }
 
+    elseif (!empty($tmpkat) && (!preg_match($regexKategorie, $_POST['kategorie']))) {
+        echo "Kategorie: " . $_POST['kategorie'];
+        $ausgabe = 'Kategorie darf nur Buchstaben und "-" enthalten,' . $formular;
         //Wenn Eingaben in Ordnung
     } else {
         if (isset($_POST['ganztag'])) {

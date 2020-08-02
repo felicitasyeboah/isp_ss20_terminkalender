@@ -22,6 +22,7 @@ class Database
             exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
         }
     }
+
     public function getDbCon()
     {
         return $this->dbCon;
@@ -35,51 +36,64 @@ class Database
       }
     }*/
 
-    public function select($sql, $class) {
-      $statement = $this->dbCon->prepare($sql);
+    public function select($sql, $class)
+    {
+        $statement = $this->dbCon->prepare($sql);
 
-      if ($statement->execute()) {
-        return $statement->fetchAll(PDO::FETCH_CLASS, $class);
-      }
+        if ($statement->execute()) {
+            return $statement->fetchAll(PDO::FETCH_CLASS, $class);
+        }
     }
 
-    public function insert($sql) {
-      $statement = $this->dbCon->prepare($sql);
-                              
-      $statement->execute();
-    }
-
-    public function update($sql) {
+    public function insert($sql)
+    {
         $statement = $this->dbCon->prepare($sql);
 
         $statement->execute();
     }
 
-    public function delete($sql) {
-      $statement = $this->dbCon->prepare($sql);
+    public function selectColor($sql)
+    {
+        $statement = $this->dbCon->prepare($sql);
 
-      $statement->execute();
+        $statement->execute();
     }
 
-    public function getlastId() {
-      return $this->dbCon->lastInsertId();
+    public function update($sql)
+    {
+        $statement = $this->dbCon->prepare($sql);
+
+        $statement->execute();
+    }
+
+    public function delete($sql)
+    {
+        $statement = $this->dbCon->prepare($sql);
+
+        $statement->execute();
+    }
+
+    public function getlastId()
+    {
+        return $this->dbCon->lastInsertId();
     }
 
     /**
      * Lädt alle Kategorien ins Dropdownmenue der editEvent.php
      */
-    public function getAllKategorien() {
-      $html = "";
-      $sql = "SELECT * FROM `kategorie`";
-      $ergebnis = $this->dbCon->query($sql);
-      foreach($ergebnis as $zeile) {
-          // "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
-          $html .= '<option value="' . htmlspecialchars($zeile["id"]). '">"' . htmlspecialchars($zeile["name"]) . '"</option>';
-      }
-      return $html;
-  }
+    public function getAllKategorien()
+    {
+        $html = "";
+        $sql = "SELECT * FROM `kategorie`";
+        $ergebnis = $this->dbCon->query($sql);
+        foreach ($ergebnis as $zeile) {
+            // "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
+            $html .= '<option value="' . htmlspecialchars($zeile["id"]) . '">"' . htmlspecialchars($zeile["name"]) . '"</option>';
+        }
+        return $html;
+    }
 
-  public function getKategorie($katid)
+    public function getKategorie($katid)
     {
         $kategorie = NULL;
 
@@ -95,18 +109,9 @@ class Database
 
     } // Ende Funktion getKategorie()
 
- // Ende Funktion getKategorie()
+    // Ende Funktion getKategorie()
 
-/*public function getColor($kategorieid){
-  $sql = "SELECT farbe FROM kategorie WHERE id = :id";
-  $kommando = $this->dbCon->prepare($sql);
 
-  $kommando->bindParam(":id", $kategorieid);
-  $kommando->execute();
-  while($zeile = $kommando->fetch(PDO::FETCH_OBJ)) {
-      $ergebnis = $zeile->farbe;
-  }
-  return $ergebnis;
-}*/
 }
+
 ?>

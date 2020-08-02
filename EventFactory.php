@@ -135,7 +135,9 @@ class EventFactory
 
       return $events;
 
-    } // Ende Funktion getEventsforCategory()
+    }
+
+    // Ende Funktion getEventsforCategory()
 
     /*public function getColor($kategorieid){
       $sql = "SELECT farbe FROM kategorie WHERE id = :id";
