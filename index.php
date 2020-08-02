@@ -35,10 +35,26 @@
     if(isset($_GET['kat'])) {
       $kalender->setKatFilter($_GET['kat']);
     }
-    //$kalender->showMonth();
+    if(isset($_GET['ansicht'])) {
+      $kalender->setAnsicht($_GET['ansicht']);
+      switch ($_GET['ansicht']) {
+        case 'Monat':
+          $kalender->showMonth();
+          break;
+        case 'Woche':
+          $kalender->showWeek();
+          break;
+        case 'Tag':
+          $kalender->showDay();
+          break;
+        }
+    } else {
+      $kalender->showMonth();
+    }
+
 
     // Für Methode ohne Ajax
-    if(isset($_POST['wochenansicht']) || isset($_GET['w'])) {
+    /*if(isset($_POST['wochenansicht']) || isset($_GET['w'])) {
         $kalender->showWeek();
     }
     elseif(isset($_POST['tagesansicht'])) {
@@ -47,13 +63,13 @@
     else {
         $kalender->showMonth();
 
-    }
+    }*/
     echo '</div>';
     echo '<p></p>';
     // Laedt Seite editEvent.php -->
     
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
-   echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
+   /*echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
         <input type="submit" name="wochenansicht" value="Wochenansicht">
     </form>';
     echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
@@ -61,7 +77,7 @@
     </form>';
     echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
         <input type="submit" name="monatsansicht" value="Monatsansicht">
-    </form>';
+    </form>';*/
 
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode mit Ajax.
     /*echo '<input type="button" name="showWeek" value="Wochenansicht" onclick="loadWeek(' . $woche . ', '.$monat .' , '.$jahr .')">';
@@ -151,14 +167,13 @@
 
     function startFilter(j, m) {
       var kat  = document.getElementById("kategorie").value;
+      var show = document.querySelector('input[name="ansicht"]:checked').value;
       //var show = document.getElementById("ansicht").value;
       var params = 'm=' + m + '&j=' + j;
-      params += (kat !== '') ? '&kat=' + kat + '' : '';
+      params += (kat  !== '') ? '&kat=' + kat + '' : '';
+      params += (show !== '') ? '&ansicht=' + show + '' : '';
       window.location.replace('index.php\?' + params);
-      //window.location.replace('index.php\?m=' + m + '&j=' + j + '&kat=' + kat + '');
-      //$ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
-
-    }
+     }
 
     </script>
 

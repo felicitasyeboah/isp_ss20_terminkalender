@@ -37,6 +37,7 @@ class Kalender
     private $timestamp_montag;
     private $timestamp_sonntag;
     private $katFilter;
+    private $ansicht;
 
     public function __construct($monat, $jahr, $woche, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
     {
@@ -70,17 +71,31 @@ class Kalender
       $this->katFilter = $katId;
     }
 
+    public function setAnsicht($ansicht) {
+      $this->ansicht = $ansicht;
+    }
+
     private function addNavBar() {
       $kategorie = $GLOBALS["db"]->getAllKategorien();
 
-      $navBar = '<div class="nav eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
-      $navBar .= '<div class="nav eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
+      $navBar  = '<div class="infobar nav eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
+      $navBar .= '<div class="infobar nav eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
       $navBar .= '<div id="filter" class="invisible">';
-      $navBar .= '<div class="navbar">';
+      $navBar .= '<div class="filterbar">';
       $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" value="' . $this->katFilter . '">
           <datalist id="kategorieName"> ' . $kategorie . '</datalist></label>';
-      $navBar .= '<div class="eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
-      $navBar .= '<div class="eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ')"></div>';
+      $navBar .= '<div class="infobar eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
+      $navBar .= '<div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ')"></div>';
+      $navBar .= '</div>';
+      $navBar .= '<div class="ansichtbar">';
+      $navBar .= '<input type="radio" id="monat" name="ansicht" value="Monat" ';
+      if($this->ansicht === "Monat") $navBar .= 'checked';
+      $navBar .= '>';
+      $navBar .= '<label for="monat"> Monat</label> ';
+      $navBar .= '<input type="radio" id="woche" name="ansicht" value="Woche" ';
+      if($this->ansicht === "Woche") $navBar .= 'checked';
+      $navBar .= '>';
+      $navBar .= '<label for="woche"> Woche</label>';
       $navBar .= '</div>';
 
       return $navBar;
@@ -92,9 +107,9 @@ class Kalender
      */
     public function showMonth()
     {
-                echo 'Show month';
         $ausgabe = '<table id="views">';
-        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
+        //$ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
+        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="window.location.replace(\'index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="window.location.replace(\'index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '\')"></div>';
 
         //\\ Navigation (Filter, Ansichten)
         $ausgabe .= $this->addNavBar();
