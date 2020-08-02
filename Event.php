@@ -63,16 +63,12 @@ class Event
             if ($this->kategorie !== null) {
                 if ($this->kategorie->getId() === null) {
                     if ($this->kategorie->getName() !== '') {
-                        //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
 
                         $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
                         $GLOBALS["db"]->insert($sql);
                         echo "Neue Category wurde in der Database eingetragen.<br/>";
 
-                        //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                        //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
                         $this->kategorieid = $GLOBALS["db"]->getlastId();
-
                     }
                 }
             } else {
@@ -92,11 +88,9 @@ class Event
                 $sql .= ",'" . $this->gruppe . "')";
             }
 
-            //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-            //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
-            $GLOBALS["db"]->insert($sql);
+             $GLOBALS["db"]->insert($sql);
             echo "Event wurde in der Database eingetragen.<br/>";
-            //$this->dbCon = null; // Verbindung zur DB wird geschlossen
+
         } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
             // gecatched und der Fehler ausgegeben.
             echo "Fehler: " . $e->getMessage();
@@ -105,7 +99,11 @@ class Event
 
     public function deleteEvent()
     {
-        $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
+        if($this->isGroupEvent()) {
+          $sql = "DELETE FROM `termine` WHERE `gruppe` = '" . $this->gruppe . "'";
+        } else {
+          $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
+        }
         $GLOBALS["db"]->delete($sql);
     }
 
@@ -114,17 +112,11 @@ class Event
         if ($this->kategorie !== null) {
             if ($this->kategorie->getId() === null) {
                 if ($this->kategorie->getName() !== '') {
-                    /*$sql = "UPDATE `kategorie` SET `name` ='" . $this->kategorie->getName() .  "', `farbe` = '" . $this->kategorie->getFarbe() . "' WHERE `kategorie`.`id` =". $this->kategorieid.""; //SQL Statement
-                    echo $sql;
-                    $GLOBALS["db"]->update($sql);
-                    echo "Neue Category wurde in der Database eingetragen.<br/>";*/
 
                     $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
                     $GLOBALS["db"]->insert($sql);
                     echo "Neue Category wurde in der Database eingetragen.<br/>";
 
-                    //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                    //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
                     $this->kategorieid = $GLOBALS["db"]->getlastId();
 
                 }
@@ -204,6 +196,13 @@ class Event
         $html .= '</td>';
 
         return $html;
+    }
+
+    /**
+     * Gehört der Termin zu einer Gruppe?
+     */
+    public function isGroupEvent() : bool {
+      return ($this->gruppe === null) ? false : true;
     }
 
     /**
