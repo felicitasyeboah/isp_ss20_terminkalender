@@ -55,26 +55,61 @@ class EventFactory
       return $events;
     }
 
-    public function updateEvent()
-    {
+    public function updateEvent() {
         //$sql = "UPDATE buecher SET $spalte = (?) WHERE buecher . id = $id";
         //UPDATE `termine` SET `ort` = 'geaenderter Ort' WHERE `termine`.`id` = 5
         //$sql = "UPDATE `termine` SET `ort` = 'geaenderter Ort' WHERE `termine`.`id` = 5";
 
     }
 
-    public function getEvent($id)
-    {
+    public function getEventbyId($id) {
 
       $sql = "SELECT * FROM `termine` WHERE `id` = " . $id . "";
-      $event = $GLOBALS["db"]->selectObj($sql, "Event");
-      //$result = $GLOBALS["db"]->select($sql);
-      //$event = $this->createEvent($result['titel'], $result['beschreibung'], $result['anfang'], $result['ende'], $result['ort'], $result['kategorieid'], $result['farbe'], $result['ganztag']);
+      $event = $GLOBALS["db"]->select($sql, "Event")[0];
+
+      //\\ gehört der Termin zu einer Gruppe, dann den ganzen Termin zusammenbauen
+      if($event->getGruppe() !== null) {
+        $event = $this->getEventGroup($event);
+      }
 
       return $event;
     }
 
-    /** FERTIG
+    /**
+     * Hilfsfunktion! Holt die Termine einer Gruppe und bastelt daraus ein Termin-Objekt
+     */
+    private function getEventGroup($event) {
+
+      $gtermin = $event;
+      $events = [];
+
+      //\\ Elemente der Gruppe einlesen, in aufsteigender Reihenfolge des Anfangsdatums
+      $events = $this->getEventbyGroup($event->getGruppe());
+
+      //\\ wir brauchen das Anfangsdatum des ersten Objekts...
+      $gtermin->setAnfang(reset($events)->getAnfang());
+
+      //\\ und das Ende-Datum des letzten Elements
+      $gtermin->setEnde(end($events)->getEnde());
+
+      return $gtermin;
+    }
+
+    /**
+     * Holt alle Termine, die zu einer Gruppe gehören
+     */
+    public function getEventbyGroup($gruppe) {
+
+      $events = [];
+
+      $sql = "SELECT * FROM `termine` WHERE `gruppe` = '" . $gruppe . "' ORDER BY `anfang` ASC";
+      //echo $sql;
+      $events = $GLOBALS["db"]->select($sql, "Event");
+
+      return $events;
+    }
+
+    /**
      * Events an einem Tag holen
      */
     public function getEventsonDay($jahr, $monat, $tag, $kategorie = null)
@@ -82,7 +117,7 @@ class EventFactory
         $events = [];
 
         $sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
-        $events = $GLOBALS["db"]->selectObj($sql, "Event");
+        $events = $GLOBALS["db"]->select($sql, "Event");
 
         if($kategorie !== 0) {
           array_filter($events, function ($element) use ($kategorie) { return ($element != $kategorie); } );
@@ -91,21 +126,6 @@ class EventFactory
         return $events;
 
     } // Ende Funktion getEventsonDay()
-
-    /*public function getEventbyId($id) : Event {
-
-      $event = NULL;
-
-      $select = $this->dbCon->prepare("SELECT *
-                                    FROM `termine`
-                                    WHERE `id` = :id");
-
-      if ($select->execute([':id' => $id])) {
-        $event = $select->fetchObject('Event');
-      }
-
-      return ($event) ? $event : NULL;
-    }*/
 
     public function getEventsforCategory($category)
     {

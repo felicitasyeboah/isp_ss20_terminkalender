@@ -8,7 +8,7 @@ if (isset($_GET["details"]) || isset($_GET["delete"])) {
     $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
     if (isset($id)) {
         $factory = new EventFactory();
-        $termin = $factory->getEvent($id)[0];
+        $termin = $factory->getEventbyId($id);
     }
 
     if (isset($termin) && isset($_GET["details"])) {

@@ -9,7 +9,7 @@ $defaultTime = "00:00";
 $ganztagTime = "23:59";
 if (isset($_GET["id"])) {
     $factory = new EventFactory();
-    $termin = $factory->getEvent($_GET["id"])[0];
+    $termin = $factory->getEventbyId($_GET["id"]);
     $tempid = $_GET["id"];
     //$tempcolor = $_GET["color"];
 

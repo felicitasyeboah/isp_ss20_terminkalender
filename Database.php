@@ -27,15 +27,15 @@ class Database
         return $this->dbCon;
     }
 
-    public function select($sql) {
+    /*public function select($sql) {
       $statement = $this->dbCon->prepare($sql);
                               
       if ($statement->execute()) {
         return $statement->fetchAll();
       }
-    }
+    }*/
 
-    public function selectObj($sql, $class) {
+    public function select($sql, $class) {
       $statement = $this->dbCon->prepare($sql);
 
       if ($statement->execute()) {
