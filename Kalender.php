@@ -36,6 +36,8 @@ class Kalender
     private $endWeek;
     private $timestamp_montag;
     private $timestamp_sonntag;
+    private $katFilter;
+
     public function __construct($monat, $jahr, $woche, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
     {
         //$this->infoDatumWeek = [];
@@ -64,6 +66,10 @@ class Kalender
 
     }
 
+    public function setKatFilter($katId) {
+      $this->katFilter = $katId;
+    }
+
     private function addNavBar() {
       $kategorie = $GLOBALS["db"]->getAllKategorien();
 
@@ -71,9 +77,10 @@ class Kalender
       $navBar .= '<div class="nav eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
       $navBar .= '<div id="filter" class="invisible">';
       $navBar .= '<div class="navbar">';
-      $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" >
+      $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" value="' . $this->katFilter . '">
           <datalist id="kategorieName"> ' . $kategorie . '</datalist></label>';
       $navBar .= '<div class="eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
+      $navBar .= '<div class="eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ')"></div>';
       $navBar .= '</div>';
 
       return $navBar;
@@ -128,7 +135,7 @@ class Kalender
 
             //\\ Events anzeigen
             $evfactory = new EventFactory();
-            $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter);
+            $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter, $this->katFilter);
             foreach ($events as &$event) {
                 $ausgabe .= $event->toHTML();
             }

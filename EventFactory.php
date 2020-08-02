@@ -119,10 +119,9 @@ class EventFactory
         $sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
         $events = $GLOBALS["db"]->select($sql, "Event");
 
-        if($kategorie !== 0) {
-          array_filter($events, function ($element) use ($kategorie) { return ($element != $kategorie); } );
+        if($kategorie !== null) {
+          $events = array_filter($events, function ($event) use ($kategorie) { return ($event->getKategorieid() === $kategorie); } );
         }
-        
         return $events;
 
     } // Ende Funktion getEventsonDay()

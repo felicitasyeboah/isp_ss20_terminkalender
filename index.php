@@ -32,6 +32,9 @@
         $woche = $_GET['w'];
     }
     $kalender = new Kalender($monat, $jahr, $woche);
+    if(isset($_GET['kat'])) {
+      $kalender->setKatFilter($_GET['kat']);
+    }
     //$kalender->showMonth();
 
     // Für Methode ohne Ajax
@@ -142,8 +145,16 @@
     }
 
     function bearbeiteKategorie() {
-      var kat = document.getElementById("kategorie").value
+      var kat = document.getElementById("kategorie").value;
       window.location.replace('editCategory.php\?id=' + kat + '') ;
+    }
+
+    function startFilter(j, m) {
+      var kat  = document.getElementById("kategorie").value;
+      //var show = document.getElementById("ansicht").value;
+      window.location.replace('index.php\?m=' + m + '&j=' + j + '&kat=' + kat + '');
+      //$ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
+
     }
 
     </script>
