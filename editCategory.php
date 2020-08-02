@@ -1,45 +1,51 @@
 <?php
 include "EventFactory.php";
+$ausgabe = '';
 
-if (isset($_GET["id"])) {
-    //
-    $catId = $_GET["id"];
-    $factory = new EventFactory();
+//
+$catId = $_GET["id"];
+//$factory = new EventFactory();
 
-    $kategorie = $db->getKategorie($catId);
-    $catColor = $kategorie->getFarbe();
-    $catName = $kategorie->getName();
-    $regexKategorie = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
+$kategorie = $db->getKategorie($catId);
+$catColor = $kategorie->getFarbe();
+$catName = $kategorie->getName();
+$regexKategorie = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
 
 
-    $html = '<h2> Kategorie bearbeiten</h2>
-<form id="editCat" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">
+$html = '<h2> Kategorie bearbeiten</h2>
+<form id="editCat" action="' . htmlspecialchars($_SERVER['PHP_SELF'])."?id=" . $catId .'" method="post">
 <label>Kategoriename: <input type="text" id="kategoriename" name="kategoriename"  onchange="loadCatName(this.value)" value="' . $catName . '">
         </label>
         <label for="farbe"> Kategoriefarbe:</label>
         <input type="color" id="farbe" name="farbe" value="' . $catColor . '">
         <button type="submit" name="changeCatBtn" value="absenden">OK</button>&nbsp;&nbsp;
         <br><br><br>
-    <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
+    <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
 
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
-        if (!isset($_POST['kategoriename']) && (!preg_match($regexKategorie, $_POST['kategoriename']))) {
-            echo "Kategorie: " . $_POST['kategoriename'];
-            $ausgabe = 'Kategorie darf nicht leer sein und nur Buchstaben und "-" enthalten,' . $hmtl;
-        } else {
-            $ausgabe = "Kategorie wurde ge&auml;ndert.";
-        }
-    } else {
-        $ausgabe = $html;
-    }
-    include("inc/header.inc.php");
-    echo $ausgabe;
-    include "inc/footer.inc.php";
 
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    /*if (!empty($_POST['kategoriename']) && (!preg_match($regexKategorie, $_POST['kategoriename']))) {
+        echo "Kategorie: " . $_POST['kategoriename'];
+        $ausgabe = 'Kategorie darf nicht leer sein und nur Buchstaben und "-" enthalten,' . $html;
+    }*/
+
+    $cat = $GLOBALS["db"]->getKategorie($catId);
+    $cat->setFarbe($_POST['farbe']);
+    $cat->setName($_POST['kategoriename']);
+    $cat->updateCategory();
+    $ausgabe .= 'Kategorie wurde ge&auml;ndert. <br><br><input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
+
+
+} else {
+    $ausgabe .= $html;
 }
-else {
-    echo "es wurde keine Kategorie ausgewählt";
-}
+include("inc/header.inc.php");
+echo $ausgabe;
+include "inc/footer.inc.php";
+
+//$ausgabe .= "Kategorie wurde ge&auml;ndert.";
+
+
 ?>
 <script>
     //Farbe wird passen zu ausgewählten Category aktualisiert (mit Ajax)

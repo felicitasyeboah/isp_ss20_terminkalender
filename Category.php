@@ -14,6 +14,12 @@ class Category
       $this->name = $name;
       $this->farbe = $farbe;
     }
+    public function updateCategory() {
+
+        $sql = "UPDATE `kategorie` SET `farbe` = '" . $this->farbe . "', `name` = '". $this->name ."' WHERE `kategorie`.`id` =" . $this->id . "";
+        $GLOBALS["db"]->update($sql);
+    }
+
 
     /**
      * @return mixed
