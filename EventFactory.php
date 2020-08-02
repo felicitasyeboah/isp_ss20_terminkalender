@@ -127,8 +127,14 @@ class EventFactory
 
     } // Ende Funktion getEventsonDay()
 
-    public function getEventsforCategory($category)
-    {
+    public function getEventsforCategory($catId)
+    { 
+      $events = [];
+
+      $sql = "SELECT * FROM `termine` WHERE `kategorieid` = '" . $catId . "";
+      $events = $GLOBALS["db"]->select($sql, "Event");
+
+      return $events;
 
     } // Ende Funktion getEventsforCategory()
 
