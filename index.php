@@ -120,7 +120,8 @@
 
     function bearbeiteKategorie() {
       var kat = document.getElementById("kategorie").value;
-      window.location.replace('editCategory.php\?id=' + kat + '') ;
+      var params = (kat !== '') ? '&id=' + kat + '' : '';
+      window.location.replace('editCategory.php\?' + params) ;
     }
 
     function startFilter(j, m, w) {
