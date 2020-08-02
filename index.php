@@ -152,7 +152,10 @@
     function startFilter(j, m) {
       var kat  = document.getElementById("kategorie").value;
       //var show = document.getElementById("ansicht").value;
-      window.location.replace('index.php\?m=' + m + '&j=' + j + '&kat=' + kat + '');
+      var params = 'm=' + m + '&j=' + j;
+      params += (kat !== '') ? '&kat=' + kat + '' : '';
+      window.location.replace('index.php\?' + params);
+      //window.location.replace('index.php\?m=' + m + '&j=' + j + '&kat=' + kat + '');
       //$ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
 
     }
