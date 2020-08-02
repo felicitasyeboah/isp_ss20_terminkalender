@@ -1,34 +1,34 @@
 <?php
 include "EventFactory.php";
 $ausgabe = '';
+$html = '';
 
-//
-$catId = $_GET["id"];
+if (isset($_GET["id"])) {
+  $catId = $_GET["id"];
 
-$kategorie = $db->getKategorie($catId);
-$catColor = $kategorie->getFarbe();
-$catName = $kategorie->getName();
-$regexKategorie = '/^[a-zA-ZüöäÜÖÄß0-9\s\-]+$/i';
+  $kategorie = $db->getKategorie($catId);
+  $catColor = $kategorie->getFarbe();
+  $catName = $kategorie->getName();
+  $regexKategorie = '/^[a-zA-ZüöäÜÖÄß0-9\s\-]+$/i';
 
-
-$html = '<h2> Kategorie bearbeiten</h2>
-<form id="editCat" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $catId . '" method="post">
-<label>Kategoriename: <input type="text" id="kategoriename" name="kategoriename"  onchange="loadCatName(this.value)" value="' . $catName . '">
-        </label>
-        <label for="farbe"> Kategoriefarbe:</label>
-        <input type="color" id="farbe" name="farbe" value="' . $catColor . '">
-        <button type="submit" name="changeCatBtn" value="absenden">Kategorie bearbeiten</button>&nbsp;&nbsp;
-        <div class="eventLink ico_del" onclick="window.location.replace(\'Category.php\?deletecat&id=' . $catId . '\')"></div>
-        <h2> Neue Kategorie anlegen</h2>
-        <label>Neue Kategorie: <input type="text" id="neueKat" name="neueKat"  onchange="loadNewCatName(this.value)" value="">
-        </label>
-        <label for="farbe"> Kategoriefarbe:</label>
-        <input type="color" id="neueFarbe" name="neueFarbe" value="#ffffff">
-        <button type="submit" name="newCat" value="absenden">Neue Katelgorie anlegen</button>&nbsp;&nbsp;
-        <br><br><br>
-    
-
-    <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
+  $html .= '<h2> Kategorie bearbeiten</h2>
+  <form id="editCat" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $catId . '" method="post">
+  <label>Kategoriename: <input type="text" id="kategoriename" name="kategoriename"  onchange="loadCatName(this.value)" value="' . $catName . '">
+  </label>
+  <label for="farbe"> Kategoriefarbe:</label>
+  <input type="color" id="farbe" name="farbe" value="' . $catColor . '">
+  <button type="submit" name="changeCatBtn" value="absenden">Kategorie bearbeiten</button>&nbsp;&nbsp;
+  <div class="eventLink ico_del" onclick="window.location.replace(\'Category.php\?deletecat&id=' . $catId . '\')"></div>
+  <h2> Neue Kategorie anlegen</h2>
+  <label>Neue Kategorie: <input type="text" id="neueKat" name="neueKat"  onchange="loadNewCatName(this.value)" value="">
+  </label>
+  <label for="farbe"> Kategoriefarbe:</label>
+  <input type="color" id="neueFarbe" name="neueFarbe" value="#ffffff">
+  <button type="submit" name="newCat" value="absenden">Neue Katelgorie anlegen</button>&nbsp;&nbsp;';
+} else {
+  $html .= '<div>Bitte geben Sie eine Kategorie an!</div>';
+}
+$html .= '<br><br><br><input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
