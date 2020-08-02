@@ -111,7 +111,7 @@ class Event
      */
     public function update()
     {
-        $this->kategorie = null;
+        $this->kategorieid = null;
         $this->updateEvent();
     }
 

@@ -5,8 +5,6 @@ if (isset($_GET["deletecat"])) {
   $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
   if (isset($id)) {
     $cat = $GLOBALS["db"]->getKategorie($id);
-    //$cat->attachOberver();
-    //$cat = $db->getKategorie($id);
     $factory = new EventFactory();
     $events= $factory->getEventsbyCategory($id);
     foreach ($events as &$event) {

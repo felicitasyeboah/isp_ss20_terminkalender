@@ -19,6 +19,7 @@ $html = '<h2> Kategorie bearbeiten</h2>
         <label for="farbe"> Kategoriefarbe:</label>
         <input type="color" id="farbe" name="farbe" value="' . $catColor . '">
         <button type="submit" name="changeCatBtn" value="absenden">Kategorie bearbeiten</button>&nbsp;&nbsp;
+        <div class="eventLink ico_del" onclick="window.location.replace(\'Category.php\?deletecat&id=' . $catId . '\')"></div>
         <h2> Neue Kategorie anlegen</h2>
         <label>Neue Kategorie: <input type="text" id="neueKat" name="neueKat"  onchange="loadNewCatName(this.value)" value="">
         </label>
