@@ -1,12 +1,13 @@
 <?php
-include "EventFactory.php";
+require_once "Database.php";
 $ausgabe = '';
 
 //
 $catId = $_GET["id"];
 //$factory = new EventFactory();
 
-$kategorie = $db->getKategorie($catId);
+//$kategorie = $db->getKategorie($catId);
+$kategorie = $GLOBALS["db"]->getKategorie($catId);
 $catColor = $kategorie->getFarbe();
 $catName = $kategorie->getName();
 $regexKategorie = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
@@ -19,6 +20,7 @@ $html = '<h2> Kategorie bearbeiten</h2>
         <label for="farbe"> Kategoriefarbe:</label>
         <input type="color" id="farbe" name="farbe" value="' . $catColor . '">
         <button type="submit" name="changeCatBtn" value="absenden">OK</button>&nbsp;&nbsp;
+        <div class="eventLink ico_del" onclick="window.location.replace(\'Category.php\?deletecat&id=' . $catId . '\')"></div
         <br><br><br>
     <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
 

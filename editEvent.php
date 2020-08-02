@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $tmpkat = $_POST['kategorie'];
     $regexTitel = '/^[a-zA-ZüöäÜÖÄß0-9\s\-.!\?]+$/i';
     $regexOrt = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
-    $regexKategorie = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
+    $regexKategorie = '/^[a-zA-ZüöäÜÖÄß0-9\s\-]+$/i';
     if (empty($titel)) {
         $ausgabe = 'Bitte einen Titel eingeben.' . $formular;
     } elseif (!preg_match($regexTitel, $_POST['titel'])) {
@@ -125,21 +125,30 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $factory = new EventFactory();
         $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
-        //\\ wurde eine neue Category eingegeben?
+        //\\ wurde eine neue Kategorie eingegeben?
+        $newkatid = null;
+        if ($termine[0]->getKategorie() == null && !empty($_POST['kategorie'])) {
+          $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $_POST['kategorie'] . "','" . $_POST['farbe'] . "')";
+          $GLOBALS["db"]->insert($sql);
+          echo "Neue Kategorie wurde in die Datenbank eingetragen.<br/>";
+
+          $newkatid = $GLOBALS["db"]->getlastId();
+        }
+        
         foreach ($termine as &$termin) {
-            if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
-                $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
+          if ($newkatid !== null) {
+            $termin->setKategorieid($newkatid);
+          }
+          
+          if($_POST['tempid'] == "") {
+            $termin->addEvent();
+          } else {
+              if($_POST['group'] == "") {
+                $termin->updateEvent();
+                } else {
+                    $termin->addEvent();
+                  }
             }
-         if($_POST['tempid'] == "") {
-             $termin->addEvent();
-         }
-         else {
-             if($_POST['group'] == "") {
-               $termin->updateEvent();
-             } else {
-               $termin->addEvent();
-             }
-         }
         }
         if($_POST['group'] !== "") {
           $termine[0]->setGruppe($_POST['group']);

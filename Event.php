@@ -60,7 +60,7 @@ class Event
     public function addEvent()
     {
         try {
-            if ($this->kategorie !== null) {
+            /*if ($this->kategorie !== null) {
                 if ($this->kategorie->getId() === null) {
                     if ($this->kategorie->getName() !== '') {
 
@@ -73,7 +73,7 @@ class Event
                 }
             } else {
                 $this->kategorieid = null;
-            }
+            }*/
 
             $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
             if ($this->kategorieid === null) {
@@ -106,9 +106,18 @@ class Event
         $GLOBALS["db"]->delete($sql);
     }
 
+    /**
+     * It is called by the Subject, usually by SplSubject::notify()
+     */
+    public function update()
+    {
+        $this->kategorie = null;
+        $this->updateEvent();
+    }
+
     public function updateEvent()
     {
-        if ($this->kategorie !== null) {
+        /*´´if ($this->kategorie !== null) {
             if ($this->kategorie->getId() === null) {
                 if ($this->kategorie->getName() !== '') {
 
@@ -122,7 +131,7 @@ class Event
             }
         } else {
             $this->kategorieid = null;
-        }
+        }*/
         $tmpKat = "";
         $tmpGru = "";
         if ($this->kategorieid === null) {
@@ -140,7 +149,6 @@ class Event
         , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = " . $tmpKat . " , `gruppe` = " . $tmpGru . " WHERE `termine`.`id` =" . $this->id . "";
 
 
-        echo $sql;
         $GLOBALS["db"]->update($sql);
     }
 
@@ -154,8 +162,7 @@ class Event
     public function toHTML(): string
     {
         $html = '<div class="event"';
-        if (isset($this->kategorie) && !isset($this->farbe)) $html .= ' style="border-top: Solid 6px ' . $this->kategorie->farbe . '"';
-        if (isset($this->farbe)) $html .= ' style="border-top: Solid 12px ' . $this->farbe . '"';
+        if (isset($this->kategorie)) $html .= ' style="border-top: Solid 6px ' . $this->kategorie->farbe . '"';
         $html .= 'id="' . $this->id . '"';
         $html .= 'title="' . $this->beschreibung . '&#013;' . $this->ort . '"';
         $html .= ' onClick="zeigeEvent(' . $this->id . ')" ';

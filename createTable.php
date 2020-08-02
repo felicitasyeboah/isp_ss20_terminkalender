@@ -16,7 +16,6 @@ try {
         `titel` VARCHAR(65) NOT NULL , 
         `beschreibung` TEXT , 
         `ort` VARCHAR(65) ,
-        `farbe` CHAR(7) ,
         `gruppe` CHAR(32) ,
         `kategorieid` INT , 
          PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;";

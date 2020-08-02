@@ -109,9 +109,6 @@ class Database
 
     } // Ende Funktion getKategorie()
 
-    // Ende Funktion getKategorie()
-
-
-}
+ }
 
 ?>

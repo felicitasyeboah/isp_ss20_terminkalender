@@ -126,30 +126,16 @@ class EventFactory
 
     } // Ende Funktion getEventsonDay()
 
-    public function getEventsforCategory($catId)
+    public function getEventsbyCategory($catId)
     { 
       $events = [];
 
-      $sql = "SELECT * FROM `termine` WHERE `kategorieid` = '" . $catId . "";
+      $sql = "SELECT * FROM `termine` WHERE `kategorieid` = " . $catId . "";
       $events = $GLOBALS["db"]->select($sql, "Event");
 
       return $events;
 
     }
-
-    // Ende Funktion getEventsforCategory()
-
-    /*public function getColor($kategorieid){
-      $sql = "SELECT farbe FROM kategorie WHERE id = :id";
-      $kommando = $this->dbCon->prepare($sql);
-
-      $kommando->bindParam(":id", $kategorieid);
-      $kommando->execute();
-      while($zeile = $kommando->fetch(PDO::FETCH_OBJ)) {
-          $ergebnis = $zeile->farbe;
-      }
-      return $ergebnis;
-    }*/
 }
 
 ?>
