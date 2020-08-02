@@ -28,11 +28,14 @@
           $jahr = $jahr+1;
       }
     }
+    if (isset($_GET['w'])) {
+        $woche = $_GET['w'];
+    }
     $kalender = new Kalender($monat, $jahr, $woche);
-    $kalender->showMonth();
+    //$kalender->showMonth();
 
     // Für Methode ohne Ajax
-    /*if(isset($_POST['wochenansicht'])) {
+    if(isset($_POST['wochenansicht']) || isset($_GET['w'])) {
         $kalender->showWeek();
     }
     elseif(isset($_POST['tagesansicht'])) {
@@ -41,13 +44,13 @@
     else {
         $kalender->showMonth();
 
-    }*/
+    }
     echo '</div>';
     echo '<p></p>';
     // Laedt Seite editEvent.php -->
     
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
-   /* echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
+   echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
         <input type="submit" name="wochenansicht" value="Wochenansicht">
     </form>';
     echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
@@ -55,12 +58,12 @@
     </form>';
     echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
         <input type="submit" name="monatsansicht" value="Monatsansicht">
-    </form>';*/
+    </form>';
 
     // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode mit Ajax.
-    echo '<input type="button" name="showWeek" value="Wochenansicht" onclick="loadWeek(' . $woche . ', '.$monat .' , '.$jahr .')">';
+    /*echo '<input type="button" name="showWeek" value="Wochenansicht" onclick="loadWeek(' . $woche . ', '.$monat .' , '.$jahr .')">';
     echo '<input type="button" name="showWeek" value="Tagesansicht" onclick="loadDay(' . $woche . ', '.$monat .' , '.$jahr .')">';
-    echo '<input type="button" name="showWeek" value="Monatsansicht" onclick="loadMonth(' . $woche . ', '.$monat .' , '.$jahr .')">';
+    echo '<input type="button" name="showWeek" value="Monatsansicht" onclick="loadMonth(' . $woche . ', '.$monat .' , '.$jahr .')">';*/
 
 
     include "inc/footer.inc.php";
