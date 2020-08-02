@@ -2,9 +2,7 @@
 require_once "Database.php";
 require_once "EventFactory.php";
 $ausgabe = '';
-//date('Y-m-d')
-//date('H:i')
-//date('H:i', time() + 3600)
+
 $defaultTime = "00:00";
 $ganztagTime = "23:59";
 if (isset($_GET["id"])) {
@@ -12,7 +10,6 @@ if (isset($_GET["id"])) {
     $termin = $factory->getEventbyId($_GET["id"]);
     $tempid = $_GET["id"];
     $group = ($termin->isGroupEvent()) ? $termin->getGruppe() : "";
-    //$tempcolor = $_GET["color"];
 
     $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
     $beschreibung = ($termin->getBeschreibung() !== null) ? $termin->getBeschreibung() : "";
@@ -30,12 +27,8 @@ if (isset($_GET["id"])) {
     } else {
         $katColor = "#ffffff";
     }
-    //$katColor = ($termin->getKategorie()->getFarbe()!== null) ? $termin->getKategorie()->getFarbe() : null ;
-
 
 } else {
-    //$plusEinTag = date('Y-m-d', time() + (60 * 60 * 24));
-
     $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
     $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
     $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
@@ -87,7 +80,7 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
     </form><p></p>';
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-//Formular auf sinnvolle/korrekte Eingaben ueberpruefen
+//\\ Formular auf sinnvolle/korrekte Eingaben ueberpruefen
     $tmpkat = $_POST['kategorie'];
     $regexTitel = '/^[a-zA-ZüöäÜÖÄß0-9\s\-.!\?]+$/i';
     $regexOrt = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
@@ -123,11 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
 
         //Datum und Zeit für Eintrag in Database vorbereiten
-        $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'];// . ":00";
-        echo $anfang;
-        $ende = $_POST['enddatum'] . " " . $_POST['endzeit'];// . ":00";
-        echo $ende;
-        echo "TempID2: " . $tempid;
+        $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'];
+        $ende = $_POST['enddatum'] . " " . $_POST['endzeit'];
         $factory = new EventFactory();
         $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
@@ -172,54 +162,6 @@ include("inc/header.inc.php");
 echo $ausgabe;
 include "inc/footer.inc.php";
 ?>
-<!--<script>
-    // Das XMLHttpRequest-Objekt setzen
-    var xhr = new XMLHttpRequest();
-
-    // Diese Funktion beim laden der Seite starten
-    window.addEventListener("load", function () {
-
-        // Dem HTML-Button (name="senden") den Event-Handler: "click" zuweisen,
-        // dieser ruft dann (beim klicken) die Funktion: eintragen() auf.
-        document.getElementsByName("sendEventBtn")[0].addEventListener("click", eintragen);
-    });
-
-    function eintragen() {
-        // Die Formulardaten holen
-        var daten = new FormData(document.getElementsByTagName("form")[0]);
-
-        // Die aktuelle Datei über dem HTTP-Stream öffnen
-        xhr.open("POST", document.URL, true);
-
-        // Die Formulardaten senden
-        xhr.send(daten);
-
-        // Auf eine Antwort warten
-        xhr.onreadystatechange = function () {
-
-            // Daten werden (vom PHP-Script) empfangen
-            if (xhr.readyState == 4 &&
-                xhr.status == 200) {
-
-                // Den Inhalt von 'responseText' überprüfen
-                if (xhr.responseText == "OK") {
-
-                    // Eine Meldung ausgeben
-                    document.getElementsByTagName("form")[0].innerHTML = 'Die Daten wurden gesendet.';
-                } else {
-
-                    // Die Daten in einzelne Objekte zerlegen
-                    var objekt = JSON.parse(xhr.responseText);
-
-                    // Die HTML-Elemente (var) mit den Daten befüllen
-                    document.getElementsByTagName("var")[0].innerHTML = objekt.titel;
-                    document.getElementsByTagName("var")[1].innerHTML = objekt.beschreibung;
-                    document.getElementsByTagName("var")[2].innerHTML = objekt.ort;
-                }
-            }
-        }
-    }
-</script>-->
 
 <!-- Java Scripte -->
 <script>
@@ -249,10 +191,6 @@ include "inc/footer.inc.php";
         ganztag.setHours(23)
         ganztag.setMinutes(59)
         var timeGanztag = fuehrendeNull(ganztag.getHours()) + ":" + fuehrendeNull(ganztag.getMinutes())
-        //ganztag.setDate(morgen.getDate() + 1)
-        console.log(ganztag.getDate())
-        console.log(ganztag.getDate())
-        //var datumPlus = ganztag.getFullYear() + "-" + fuehrendeNull(ganztag.getMonth() + 1) + "-" + fuehrendeNull(ganztag.getDate());
 
         if (element.checked) {
             document.getElementById("anfangszeit").setAttribute("value", "00:00")
@@ -266,7 +204,6 @@ include "inc/footer.inc.php";
             document.getElementById("anfangsdatum").setAttribute("value", datum);
             document.getElementById("enddatum").setAttribute("value", datum);
         }
-        console.log('geht');
     }
 
     //Farbe wird passen zu ausgewählten Category aktualisiert (mit Ajax)

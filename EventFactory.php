@@ -22,7 +22,6 @@ class EventFactory
       //\\ einen eindeutigen Bezeichner für die Gruppe erstellen
       if($interval->days > 0) {
         $gruppe = md5(uniqid());
-        echo "!! " . $gruppe . " !!";
       }
 
       for ($i = 0; $i <= $interval->days; $i++) {
@@ -53,13 +52,6 @@ class EventFactory
       }
 
       return $events;
-    }
-
-    public function updateEvent() {
-        //$sql = "UPDATE buecher SET $spalte = (?) WHERE buecher . id = $id";
-        //UPDATE `termine` SET `ort` = 'geaenderter Ort' WHERE `termine`.`id` = 5
-        //$sql = "UPDATE `termine` SET `ort` = 'geaenderter Ort' WHERE `termine`.`id` = 5";
-
     }
 
     public function getEventbyId($id) {
@@ -103,7 +95,6 @@ class EventFactory
       $events = [];
 
       $sql = "SELECT * FROM `termine` WHERE `gruppe` = '" . $gruppe . "' ORDER BY `anfang` ASC";
-      //echo $sql;
       $events = $GLOBALS["db"]->select($sql, "Event");
 
       return $events;

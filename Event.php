@@ -1,8 +1,6 @@
 <?php
 
-//require_once("Database.php");
 require_once("EventFactory.php");
-//include_once("EventFactory.php");
 
 if (isset($_GET["details"]) || isset($_GET["delete"])) {
     $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
@@ -29,10 +27,6 @@ class Event
     private $titel;
     private $anfang;
     private $ende;
-    private $anfangsdatum;
-    private $anfangszeit;
-    private $enddatum;
-    private $endzeit;
     private $ganztag;
     private $beschreibung;
     private $ort;
@@ -60,21 +54,6 @@ class Event
     public function addEvent()
     {
         try {
-            /*if ($this->kategorie !== null) {
-                if ($this->kategorie->getId() === null) {
-                    if ($this->kategorie->getName() !== '') {
-
-                        $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
-                        $GLOBALS["db"]->insert($sql);
-                        echo "Neue Category wurde in der Database eingetragen.<br/>";
-
-                        $this->kategorieid = $GLOBALS["db"]->getlastId();
-                    }
-                }
-            } else {
-                $this->kategorieid = null;
-            }*/
-
             $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
             if ($this->kategorieid === null) {
                 $sql .= "NULL";
@@ -117,21 +96,6 @@ class Event
 
     public function updateEvent()
     {
-        /*´´if ($this->kategorie !== null) {
-            if ($this->kategorie->getId() === null) {
-                if ($this->kategorie->getName() !== '') {
-
-                    $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
-                    $GLOBALS["db"]->insert($sql);
-                    echo "Neue Category wurde in der Database eingetragen.<br/>";
-
-                    $this->kategorieid = $GLOBALS["db"]->getlastId();
-
-                }
-            }
-        } else {
-            $this->kategorieid = null;
-        }*/
         $tmpKat = "";
         $tmpGru = "";
         if ($this->kategorieid === null) {
@@ -142,7 +106,6 @@ class Event
         if ($this->gruppe === null) {
             $tmpGru = "NULL";
         } else {
-            //$tmpGru = $this->gruppe;
             $tmpGru .= ",'" . $this->gruppe . "')";
         }
         $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "'
@@ -152,11 +115,7 @@ class Event
         $GLOBALS["db"]->update($sql);
     }
 
-    public function __set($name, $value)
-    {
-    }
-    //TODO hier wird nen Fehler angezeigt  beim hinzufuegen von termien deshalb auskommentiert
-    //public function __get($name) {return $this->$name;}
+    public function __set($name, $value) { }
 
     //\\ gibt den Event in HTML-Ansicht zurück
     public function toHTML(): string

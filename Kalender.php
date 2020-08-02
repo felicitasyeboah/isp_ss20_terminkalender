@@ -2,25 +2,6 @@
 
 include "Database.php";
 
-/*if (isset($_GET["filter"]) ) {
-  $kat = isset($_GET["kat"]) ? intval($_GET["kat"]) : null;
-  if (isset($kat)) {
-      $factory = new Kalender();
-      $termin = $factory->getEventbyId($id);
-  }
-
-  if (isset($termin) && isset($_GET["details"])) {
-      echo $termin->toHTMLDetails();
-  }
-
-  if (isset($termin) && isset($_GET["delete"])) {
-      $termin->deleteEvent();
-      $ausgabe = "Termin " . $termin->getTitel() . " erfolgreich gelöscht!";
-      $ausgabe .= '</br> <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
-      echo $ausgabe;
-  }
-}*/
-
 class Kalender
 {
     private $monat;
@@ -29,11 +10,7 @@ class Kalender
     private $tageDerWoche;
     private $anzahlTage;
     private $infoDatum;
-   //private $infoDatumWeek = [];
     private $tagDerWoche;
-    private $tag;
-    private $startWeek;
-    private $endWeek;
     private $timestamp_montag;
     private $timestamp_sonntag;
     private $katFilter;
@@ -41,7 +18,6 @@ class Kalender
 
     public function __construct($monat, $jahr, $woche, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
     {
-        //$this->infoDatumWeek = [];
         $this->monat = $monat;
         $this->jahr = $jahr;
         $this->woche = $woche;
@@ -62,14 +38,6 @@ class Kalender
          */
         $this->timestamp_sonntag = strtotime("{$this->jahr}-W{$this->woche}-7");
         $this->endWeek = (int)date("d", $this->timestamp_sonntag);
-    }
-
-    public function setKatFilter($katId) {
-      $this->katFilter = $katId;
-    }
-
-    public function setAnsicht($ansicht) {
-      $this->ansicht = $ansicht;
     }
 
     private function addNavBar() {
@@ -105,7 +73,6 @@ class Kalender
     public function showMonth()
     {
         $ausgabe = '<table id="views">';
-        //$ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a>';
         $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="window.location.replace(\'index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="window.location.replace(\'index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '\')"></div>';
 
         //\\ Navigation (Filter, Ansichten)
@@ -142,7 +109,6 @@ class Kalender
                 $ausgabe .= '</tr><tr>';
             }
 
-            //\\ TODO: Klassenvergabe dynamisieren bzw. mittels Konstante für diese Klasse
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
@@ -221,88 +187,7 @@ class Kalender
 
         echo $ausgabe;
 
-
     } // Ende Funktion showWeek()
-
-    /**
-     * Stellt einen Kalender in Tagesansicht dar
-     */
-    public function showDay()
-    {
-        echo 'Show day';
-        $ausgabe = '<table id="views">';
-        $ausgabe .= '<caption><a href="index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '">vorheriger</a>&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;<a href="index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '">n&auml;chster</a></caption>';
-
-        $ausgabe .= '<thead><tr>';
-        foreach ($this->tageDerWoche as $tag) {
-            $ausgabe .= '<th>' . $tag . '</th>';
-        }
-        $ausgabe .= '</thead></tr>';
-
-        $ausgabe .= '<tr>';
-
-        // Weil unser Kalender am Montag und nicht am Sonntag beginnt
-        if ($this->tagDerWoche == -1) {
-            $this->tagDerWoche = 0;
-        }
-        // Wenn der erste Tag des Monats nicht auf einen Montag faellt
-        // Ersten Tage des Kalenders auffuellen
-        if ($this->tagDerWoche > 0) {
-            $ausgabe .= '<td colspan="' . $this->tagDerWoche . '"</td>';
-        }
-        //Tag-Counter
-        $tagCounter = 1;
-
-
-        while ($tagCounter <= $this->anzahlTage) {
-
-            //Zuruecksetzen vom tagDerWoche Counter
-            if ($this->tagDerWoche == 7) {
-                $this->tagDerWoche = 0;
-                $ausgabe .= '</tr><tr>';
-            }
-
-            //\\ TODO: Klassenvergabe dynamisieren bzw. mittels Konstante für diese Klasse
-            $ausgabe .= '<td><span class="nr">' . $tagCounter;
-
-            //\\ Events anzeigen
-            $events = $GLOBALS["db"]->getEventsonDay($this->jahr, $this->monat, $tagCounter);
-            foreach ($events as &$event) {
-                //\\ TODO: Hier sollte das Objekt erzeugt werden und der HTML-Code des Termins per Funktionsaufrug zurückkommen
-                /*$ausgabe .= '<div class="event"';
-                if ($event['kategorieid'] > 0) $ausgabe .= ' style="border-left: Solid 12px ' . $event['farbe'] . '"';
-
-                $ausgabe .= 'id="' . $event['id'] . '"';
-                $ausgabe .= 'title="' . $event['beschreibung'] . '&#013;' . $event['ort'] . '"';
-                $ausgabe .= '" onClick="zeigeEvent(' . $event['id'] . ')" ';
-                $ausgabe .= '>' . $event['titel'] . '</div>';*/
-                $ausgabe .= $event->toHTML();
-            }
-
-            unset($event); // Entferne die Referenz auf das letzte Element
-
-            $ausgabe .= '</span></td>';
-
-            //counter hochzaehlen
-            $tagCounter++;
-            $this->tagDerWoche++;
-        } // Ende While
-
-        //resliche Tage im Kalender am Ende auffuellen, wenn der letzte Tag
-        //des Monats nicht auf das Ende des Kalenders faellt
-        if ($this->tagDerWoche != 7) {
-            $restlicheTage = 7 - $this->tagDerWoche;
-            $ausgabe .= '<td colspan="' . $restlicheTage . '"</td>';
-        }
-
-        $ausgabe .= '<tbody id="event"></tbody>';
-
-        $ausgabe .= '</tr></table>';
-
-        echo $ausgabe;
-
-
-    }
 
     /**
      * @return mixed
@@ -327,6 +212,14 @@ class Kalender
     {
         return $this->woche;
     } // Ende Funktion showDay()
+
+    public function setKatFilter($katId) {
+      $this->katFilter = $katId;
+    }
+
+    public function setAnsicht($ansicht) {
+      $this->ansicht = $ansicht;
+    }
 
 }
 

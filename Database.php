@@ -17,7 +17,6 @@ class Database
         try {
             $this->dbCon = new PDO("mysql:dbname=" . $db . ";host=" . $host . ";charset=utf8", $user, $pass);
             $this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            //echo "Verbindung ueber PDO hergestellt.";
         } catch (PDOException $e) {
             exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));
         }
@@ -27,14 +26,6 @@ class Database
     {
         return $this->dbCon;
     }
-
-    /*public function select($sql) {
-      $statement = $this->dbCon->prepare($sql);
-                              
-      if ($statement->execute()) {
-        return $statement->fetchAll();
-      }
-    }*/
 
     public function select($sql, $class)
     {
@@ -87,12 +78,14 @@ class Database
         $sql = "SELECT * FROM `kategorie`";
         $ergebnis = $this->dbCon->query($sql);
         foreach ($ergebnis as $zeile) {
-            // "<option value=" . htmlspecialchars($zeile["id"]). ">" . htmlspecialchars($zeile["name"]) . "</option>";
             $html .= '<option value="' . htmlspecialchars($zeile["id"]) . '">"' . htmlspecialchars($zeile["name"]) . '"</option>';
         }
         return $html;
     }
 
+    /**
+     * Kategorie über ID laden
+     */
     public function getKategorie($katid)
     {
         $kategorie = NULL;

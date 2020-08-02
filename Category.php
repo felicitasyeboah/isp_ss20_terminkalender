@@ -28,11 +28,6 @@ class Category
     private $farbe;
     private $observers = [];
 
-    /*public function detach($observer)
-    {
-        $this->observers->detach($observer);
-    }*/
-
     public function __construct() {}
     public function __set($name, $value) {}
     public function __get($name) {return $this->$name;}

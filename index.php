@@ -37,48 +37,15 @@
         case 'Woche':
           $kalender->showWeek();
           break;
-        case 'Tag':
-          $kalender->showDay();
-          break;
         }
     } else {
       $kalender->setAnsicht("Monat");
       $kalender->showMonth();
     }
 
-
-    // Für Methode ohne Ajax
-    /*if(isset($_POST['wochenansicht']) || isset($_GET['w'])) {
-        $kalender->showWeek();
-    }
-    elseif(isset($_POST['tagesansicht'])) {
-        $kalender->showDay();
-    }
-    else {
-        $kalender->showMonth();
-
-    }*/
     echo '</div>';
     echo '<p></p>';
-    // Laedt Seite editEvent.php -->
     
-    // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode ohne Ajax.
-   /*echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
-        <input type="submit" name="wochenansicht" value="Wochenansicht">
-    </form>';
-    echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
-        <input type="submit" name="tagesansicht" value="Tagesansicht">
-    </form>';
-    echo '<form method="post" action="'. $_SERVER['PHP_SELF'].'">
-        <input type="submit" name="monatsansicht" value="Monatsansicht">
-    </form>';*/
-
-    // Buttons zum Wechseln zwischen Monats-, Wochen- und Tagesansicht für Methode mit Ajax.
-    /*echo '<input type="button" name="showWeek" value="Wochenansicht" onclick="loadWeek(' . $woche . ', '.$monat .' , '.$jahr .')">';
-    echo '<input type="button" name="showWeek" value="Tagesansicht" onclick="loadDay(' . $woche . ', '.$monat .' , '.$jahr .')">';
-    echo '<input type="button" name="showWeek" value="Monatsansicht" onclick="loadMonth(' . $woche . ', '.$monat .' , '.$jahr .')">';*/
-
-
     include "inc/footer.inc.php";
     ?>
 
@@ -121,9 +88,6 @@
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
             xhttp.send("woche=" +w+"&monat="+m+"&jahr="+j+"&v="+validate+"");
         }
-    </script>
-
-    <script>
 
       const verzeichnis = "";
       const event = verzeichnis + "Event.php";
@@ -162,7 +126,6 @@
     function startFilter(j, m, w) {
       var kat  = document.getElementById("kategorie").value;
       var show = document.querySelector('input[name="ansicht"]:checked').value;
-      //var show = document.getElementById("ansicht").value;
       var params = 'm=' + m + '&j=' + j + '&w=' + w;
       params += (kat  !== '') ? '&kat=' + kat + '' : '';
       params += (show !== '') ? '&ansicht=' + show + '' : '';

@@ -4,7 +4,6 @@ $ausgabe = '';
 
 //
 $catId = $_GET["id"];
-//$factory = new EventFactory();
 
 $kategorie = $db->getKategorie($catId);
 $catColor = $kategorie->getFarbe();
@@ -42,12 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             echo "Kategorie: " . $_POST['kategoriename'];
             $ausgabe = 'Kategorie darf nur Buchstaben, Zahlen und "-" enthalten' . $html;
         } else {
-            /*if ($this->kategorie !== null) {
-            if ($this->kategorie->getId() === null) {
-            if ($this->kategorie->getName() !== '') {
-
-                $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
-                $GLOBALS["db"]->insert($sql);*/
 
             $cat = $GLOBALS["db"]->getKategorie($catId);
             $cat->setFarbe($_POST['farbe']);
@@ -68,9 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 include("inc/header.inc.php");
 echo $ausgabe;
 include "inc/footer.inc.php";
-
-//$ausgabe .= "Kategorie wurde ge&auml;ndert.";
-
 
 ?>
 <script>
