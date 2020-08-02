@@ -74,7 +74,6 @@ class Event
             } else {
                 $this->kategorieid = null;
             }
-            //gibt es einen Termin noch nicht, dann eintragen
 
             $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
             if ($this->kategorieid === null) {
@@ -134,10 +133,11 @@ class Event
         if ($this->gruppe === null) {
             $tmpGru = "NULL";
         } else {
-            $tmpGru = $this->gruppe;
+            //$tmpGru = $this->gruppe;
+            $tmpGru .= ",'" . $this->gruppe . "')";
         }
         $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "'
-        , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = '" . $tmpKat . "' , `gruppe` = '" . $tmpGru . "'WHERE `termine`.`id` =" . $this->id . "";
+        , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = " . $tmpKat . " , `gruppe` = " . $tmpGru . " WHERE `termine`.`id` =" . $this->id . "";
 
 
         echo $sql;
