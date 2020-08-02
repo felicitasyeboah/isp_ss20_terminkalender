@@ -55,7 +55,11 @@ class Category
         $sql = "DELETE FROM `kategorie` WHERE `kategorie`.`id` =" . $this->id . "";
         $GLOBALS["db"]->update($sql);
     }
-
+    public function addCategory($name, $farbe) {
+        $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $name . "','" . $farbe . "')"; //SQL Statement
+        $GLOBALS["db"]->insert($sql);
+        echo "Neue Category wurde in der Database eingetragen.<br/>";
+    }
     public function attach($observer)
     {
         array_push($this->observers, $observer);
