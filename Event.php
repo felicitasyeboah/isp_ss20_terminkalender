@@ -8,7 +8,7 @@ if (isset($_GET["details"]) || isset($_GET["delete"])) {
     $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
     if (isset($id)) {
         $factory = new EventFactory();
-        $termin = $factory->getEvent($id)[0];
+        $termin = $factory->getEventbyId($id);
     }
 
     if (isset($termin) && isset($_GET["details"])) {
@@ -63,22 +63,17 @@ class Event
             if ($this->kategorie !== null) {
                 if ($this->kategorie->getId() === null) {
                     if ($this->kategorie->getName() !== '') {
-                        //$sql = "SELECT * FROM `termine` WHERE (YEAR(`anfang`) = " . $jahr . " AND MONTH(`anfang`) = " . $monat . " AND DAY(`anfang`) = " . $tag . ") ORDER BY `anfang` ASC";
 
                         $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
                         $GLOBALS["db"]->insert($sql);
                         echo "Neue Category wurde in der Database eingetragen.<br/>";
 
-                        //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                        //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
                         $this->kategorieid = $GLOBALS["db"]->getlastId();
-
                     }
                 }
             } else {
                 $this->kategorieid = null;
             }
-            //gibt es einen Termin noch nicht, dann eintragen
 
             $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
             if ($this->kategorieid === null) {
@@ -92,11 +87,9 @@ class Event
                 $sql .= ",'" . $this->gruppe . "')";
             }
 
-            //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-            //$kommando->execute(array($termin->getAnfang(), $termin->getEnde(), $termin->getGanztag(), $termin->getTitel(), $termin->getBeschreibung(), $termin->getOrt(), $termin->getKategorieid()));
-            $GLOBALS["db"]->insert($sql);
+             $GLOBALS["db"]->insert($sql);
             echo "Event wurde in der Database eingetragen.<br/>";
-            //$this->dbCon = null; // Verbindung zur DB wird geschlossen
+
         } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
             // gecatched und der Fehler ausgegeben.
             echo "Fehler: " . $e->getMessage();
@@ -105,7 +98,11 @@ class Event
 
     public function deleteEvent()
     {
-        $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
+        if($this->isGroupEvent()) {
+          $sql = "DELETE FROM `termine` WHERE `gruppe` = '" . $this->gruppe . "'";
+        } else {
+          $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
+        }
         $GLOBALS["db"]->delete($sql);
     }
 
@@ -114,17 +111,11 @@ class Event
         if ($this->kategorie !== null) {
             if ($this->kategorie->getId() === null) {
                 if ($this->kategorie->getName() !== '') {
-                    /*$sql = "UPDATE `kategorie` SET `name` ='" . $this->kategorie->getName() .  "', `farbe` = '" . $this->kategorie->getFarbe() . "' WHERE `kategorie`.`id` =". $this->kategorieid.""; //SQL Statement
-                    echo $sql;
-                    $GLOBALS["db"]->update($sql);
-                    echo "Neue Category wurde in der Database eingetragen.<br/>";*/
 
                     $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $this->kategorie->getName() . "','" . $this->kategorie->getFarbe() . "')"; //SQL Statement
                     $GLOBALS["db"]->insert($sql);
                     echo "Neue Category wurde in der Database eingetragen.<br/>";
 
-                    //$kommando = $this->dbCon->prepare($sql); //SQL Statement wird vorbereitet
-                    //$kommando->execute(array($termin->getKategorie()->getName(), $termin->getKategorie()->getFarbe()));
                     $this->kategorieid = $GLOBALS["db"]->getlastId();
 
                 }
@@ -142,10 +133,11 @@ class Event
         if ($this->gruppe === null) {
             $tmpGru = "NULL";
         } else {
-            $tmpGru = $this->gruppe;
+            //$tmpGru = $this->gruppe;
+            $tmpGru .= ",'" . $this->gruppe . "')";
         }
         $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "'
-        , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = '" . $tmpKat . "' , `gruppe` = '" . $tmpGru . "'WHERE `termine`.`id` =" . $this->id . "";
+        , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = " . $tmpKat . " , `gruppe` = " . $tmpGru . " WHERE `termine`.`id` =" . $this->id . "";
 
 
         echo $sql;
@@ -204,6 +196,13 @@ class Event
         $html .= '</td>';
 
         return $html;
+    }
+
+    /**
+     * Gehört der Termin zu einer Gruppe?
+     */
+    public function isGroupEvent() : bool {
+      return ($this->gruppe === null) ? false : true;
     }
 
     /**

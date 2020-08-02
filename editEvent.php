@@ -9,8 +9,9 @@ $defaultTime = "00:00";
 $ganztagTime = "23:59";
 if (isset($_GET["id"])) {
     $factory = new EventFactory();
-    $termin = $factory->getEvent($_GET["id"])[0];
+    $termin = $factory->getEventbyId($_GET["id"]);
     $tempid = $_GET["id"];
+    $group = ($termin->isGroupEvent()) ? $termin->getGruppe() : "";
     //$tempcolor = $_GET["color"];
 
     $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
@@ -46,11 +47,13 @@ if (isset($_GET["id"])) {
     $katVal = "";
     $katColor = "#ffffff";
     $tempid = "";
+    $group = "";
 }
 
 
 $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">
         <input type="text" style="display: none;" id="tempid" name="tempid" value="' . $tempid . '">
+        <input type="text" style="display: none;" id="group" name="group" value="' . $group . '">
         <label>Titel:<var>* </var><br/><input size="65px" type="text" name="titel" value="' . $titel . '"><br><br></label>
         <label for="beschreibung">Beschreibung des Termins<var>* </var><br/>
             <textarea id="beschreibung" name=" beschreibung" rows="10" cols="60">' . $beschreibung . '</textarea>
@@ -116,13 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         echo "TempID2: " . $tempid;
         $factory = new EventFactory();
         $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
-        //$termin = $factory->createEvent($_POST['tempid'],$_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
-        /*if ($termin->getKategorie() == null && !empty($_POST['kategorie'])) {
-            $termin->addKategorie($_POST['kategorie'], $_POST['farbe']);
-        }
-
-        $termin->addEvent();*/
-
 
         //\\ wurde eine neue Category eingegeben?
         foreach ($termine as &$termin) {
@@ -133,10 +129,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
              $termin->addEvent();
          }
          else {
-             $termin->updateEvent();
+             if($_POST['group'] == "") {
+               $termin->updateEvent();
+             } else {
+               $termin->addEvent();
+             }
          }
         }
-
+        if($_POST['group'] !== "") {
+          $termine[0]->setGruppe($_POST['group']);
+          $termine[0]->deleteEvent();
+        }
 
         $ausgabe .= '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>' . $formular;
         //}
