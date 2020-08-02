@@ -46,6 +46,7 @@
           break;
         }
     } else {
+      $kalender->setAnsicht("Monat");
       $kalender->showMonth();
     }
 

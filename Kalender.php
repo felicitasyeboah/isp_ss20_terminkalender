@@ -86,11 +86,11 @@ class Kalender
       $navBar .= '</div>';
       $navBar .= '<div class="ansichtbar">';
       $navBar .= '<input type="radio" id="monat" name="ansicht" value="Monat" ';
-      if($this->ansicht === "Monat") $navBar .= 'checked';
+      if($this->ansicht == "Monat") $navBar .= 'checked';
       $navBar .= '>';
       $navBar .= '<label for="monat"> Monat</label> ';
       $navBar .= '<input type="radio" id="woche" name="ansicht" value="Woche" ';
-      if($this->ansicht === "Woche") $navBar .= 'checked';
+      if($this->ansicht == "Woche") $navBar .= 'checked';
       $navBar .= '>';
       $navBar .= '<label for="woche"> Woche</label>';
       $navBar .= '</div>';
