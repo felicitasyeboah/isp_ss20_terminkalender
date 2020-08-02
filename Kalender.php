@@ -2,7 +2,24 @@
 
 include "Database.php";
 
-//include "EventFactory.php";
+/*if (isset($_GET["filter"]) ) {
+  $kat = isset($_GET["kat"]) ? intval($_GET["kat"]) : null;
+  if (isset($kat)) {
+      $factory = new Kalender();
+      $termin = $factory->getEventbyId($id);
+  }
+
+  if (isset($termin) && isset($_GET["details"])) {
+      echo $termin->toHTMLDetails();
+  }
+
+  if (isset($termin) && isset($_GET["delete"])) {
+      $termin->deleteEvent();
+      $ausgabe = "Termin " . $termin->getTitel() . " erfolgreich gelöscht!";
+      $ausgabe .= '</br> <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
+      echo $ausgabe;
+  }
+}*/
 
 class Kalender
 {
@@ -50,11 +67,14 @@ class Kalender
     private function addNavBar() {
       $kategorie = $GLOBALS["db"]->getAllKategorien();
 
-      $navBar = '<div id="nav" class="eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
-      $navBar .= '<div id="nav" class="eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
+      $navBar = '<div class="nav eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
+      $navBar .= '<div class="nav eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
       $navBar .= '<div id="filter" class="invisible">';
-      $navBar .= '<label>Kategorie: <input type="text" name="kategorie" list="kategorieName" >
+      $navBar .= '<div class="navbar">';
+      $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" >
           <datalist id="kategorieName"> ' . $kategorie . '</datalist></label>';
+      $navBar .= '<div class="eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
+      $navBar .= '</div>';
 
       return $navBar;
 

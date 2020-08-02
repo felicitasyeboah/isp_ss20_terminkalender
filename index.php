@@ -113,12 +113,13 @@
     <script>
 
       const verzeichnis = "";
-      const kalender = verzeichnis + "Event.php";
+      const event = verzeichnis + "Event.php";
+      const kalender = verzeichnis + "Kalender.php";
       const XHR = new XMLHttpRequest();
 
       // Event
       function zeigeEvent(id) {
-        XHR.open("GET", kalender +
+        XHR.open("GET", event +
         "?details&id=" + id, true);
         XHR.send(null);
         XHR.onload = ausgabe;
@@ -138,6 +139,11 @@
     function zeigeFilter() {
       var element = document.getElementById("filter");
       element.classList.toggle("invisible");
+    }
+
+    function bearbeiteKategorie() {
+      var kat = document.getElementById("kategorie").value
+      window.location.replace('editCategory.php\?id=' + kat + '') ;
     }
 
     </script>
