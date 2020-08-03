@@ -16,6 +16,7 @@ class Database
         // Verbindung zur Database aufbauen
         try {
             $this->dbCon = new PDO("mysql:dbname=" . $db . ";host=" . $host . ";charset=utf8", $user, $pass);
+            // throw exceptions, when SQL error is caused
             $this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()));

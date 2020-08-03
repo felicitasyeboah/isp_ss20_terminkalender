@@ -1,4 +1,7 @@
 <?php
+/**
+ * K
+ */
 
 require_once "Event.php";
 require_once "Database.php";
@@ -9,6 +12,9 @@ class EventFactory
           
     }
 
+    /**
+    *  
+    */
     public function createEvent($tempid,$titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
       $events = [];
