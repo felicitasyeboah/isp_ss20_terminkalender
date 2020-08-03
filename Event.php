@@ -21,6 +21,10 @@ if (isset($_GET["details"]) || isset($_GET["delete"])) {
     }
 }
 
+
+/**
+ * Class Event
+ */
 class Event
 {
     private $id;
@@ -36,6 +40,10 @@ class Event
     private $gruppe;
 
 //\\ neuen Konstruktor zum Erstellen eines Termins verwenden
+
+    /**
+     * Event constructor.
+     */
     public function __construct()
     {
         //\\ holen des Category-Datensatzes für diesen Event
@@ -44,6 +52,10 @@ class Event
         }
     }
 
+    /**
+     * @param $name
+     * @param $farbe
+     */
     public function addKategorie($name, $farbe)
     {
         $this->kategorie = new Category();
@@ -51,11 +63,14 @@ class Event
     }
 
 
+    /**
+     * Fuegt ein Event hinzu
+     */
     public function addEvent()
     {
         try {
             $sql = "INSERT INTO `termine` (`anfang`, `ende`, `ganztag`, `titel`, `beschreibung`, `ort`, `kategorieid`, `gruppe`) VALUES ('" . $this->anfang . "','" . $this->ende . "'," . $this->ganztag . ",'" . $this->titel . "','" . $this->beschreibung . "','" . $this->ort . "',"; //SQL Statement
-            if ($this->kategorieid === null) {
+            if ($this->kategorieid == '') {
                 $sql .= "NULL";
             } else {
                 $sql .= $this->kategorieid;
@@ -75,6 +90,9 @@ class Event
         }
     }
 
+    /**
+     * Loescht ein Event
+     */
     public function deleteEvent()
     {
         if($this->isGroupEvent()) {
@@ -94,11 +112,14 @@ class Event
         $this->updateEvent();
     }
 
+    /**
+     * Updates einen Termin
+     */
     public function updateEvent()
     {
         $tmpKat = "";
         $tmpGru = "";
-        if ($this->kategorieid === null) {
+        if ($this->kategorieid == '') {
             $tmpKat = "NULL";
         } else {
             $tmpKat = $this->kategorieid;
@@ -115,9 +136,18 @@ class Event
         $GLOBALS["db"]->update($sql);
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value) { }
 
     //\\ gibt den Event in HTML-Ansicht zurück
+
+    /**
+     * gibt den Event in HTML-Ansicht zurück
+     * @return string
+     */
     public function toHTML(): string
     {
         $html = '<div class="event"';
@@ -130,6 +160,10 @@ class Event
         return $html;
     }
 
+    /**
+     * gibt den Eventdetails in HTML-Ansicht zurück
+     * @return string
+     */
     public function toHTMLDetails(): string
     {
         //\\ Kopfzeile / Navigation

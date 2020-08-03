@@ -102,11 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $ausgabe = 'Kategorie darf nur Buchstaben und "-" enthalten,' . $formular;
         //Wenn Eingaben in Ordnung
     }
-    elseif(!preg_match($regexKategorie, $_POST['kategorie']))
+   /* elseif(!preg_match($regexKategorie, $_POST['kategorie']))
     {
         echo "Kategorie: " . $_POST['kategoriename'];
         $ausgabe = 'Kategorie darf nur Buchstaben, Zahlen und "-" enthalten'  . $html;
-    }
+    }*/
     else {
         if (isset($_POST['ganztag'])) {
             $tmpGanztag = 1;

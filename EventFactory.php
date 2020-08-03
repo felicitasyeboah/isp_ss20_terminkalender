@@ -1,7 +1,4 @@
 <?php
-/**
- * K
- */
 
 require_once "Event.php";
 require_once "Database.php";
@@ -12,10 +9,23 @@ class EventFactory
           
     }
 
+
     /**
-    *  
-    */
-    public function createEvent($tempid,$titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
+     * Erstellt ein Terminobjekt
+     *
+     * @param $tempid
+     * @param $titel
+     * @param $beschreibung
+     * @param $anfang
+     * @param $ende
+     * @param $ort
+     * @param $kategorieid
+     * @param $farbe
+     * @param string $ganztag
+     * @return array
+     * @throws Exception
+     */
+    public function createEvent($tempid, $titel, $beschreibung, $anfang, $ende, $ort, $kategorieid, $farbe, $ganztag = '0') {
 
       $events = [];
       $gruppe = null;
@@ -33,7 +43,7 @@ class EventFactory
       for ($i = 0; $i <= $interval->days; $i++) {
         $event = new Event();
         $event->setAnfang($date1->format('Y-m-d H:i:s'));
-        $event->setEnde($date1->format('Y-m-d H:i:s'));
+        $event->setEnde($date2->format('Y-m-d H:i:s'));
         $event->setTitel($titel);
         $event->setBeschreibung($beschreibung);
         $event->setOrt($ort);
@@ -60,6 +70,11 @@ class EventFactory
       return $events;
     }
 
+    /**
+     *
+     * @param $id
+     * @return mixed
+     */
     public function getEventbyId($id) {
 
       $sql = "SELECT * FROM `termine` WHERE `id` = " . $id . "";
