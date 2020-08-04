@@ -169,7 +169,7 @@ class Database
         $sql = "SELECT * FROM `kategorie`";
         $ergebnis = $this->dbCon->query($sql);
         foreach ($ergebnis as $zeile) {
-            $html .= '<option value="' . htmlspecialchars($zeile["id"]) . '">"' . htmlspecialchars($zeile["name"]) . '"</option>';
+            $html .= '<option value="' . htmlspecialchars($zeile["id"]) . '">' . htmlspecialchars($zeile["name"]) . '</option>';
         }
         return $html;
     }
