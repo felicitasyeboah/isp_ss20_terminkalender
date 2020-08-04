@@ -21,7 +21,7 @@ if (isset($_GET['m'])) {
         $monat = 12;
         $jahr = $jahr - 1;
     }
-    // Bei Jahreswechsel in ein früeheres Jahr wird der $monat auf 1 (Januar gesetzt)
+    // Bei Jahreswechsel in ein frueheres Jahr wird der $monat auf 1 (Januar gesetzt)
     // und $jahr um eins inkrementiert
     if ($_GET['m'] == 13) {
         $monat = 1;
