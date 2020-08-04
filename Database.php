@@ -166,10 +166,15 @@ class Database
     public function getAllKategorien()
     {
         $html = "";
+        try {
+
         $sql = "SELECT * FROM `kategorie`";
         $ergebnis = $this->dbCon->query($sql);
         foreach ($ergebnis as $zeile) {
             $html .= '<option value="' . htmlspecialchars($zeile["id"]) . '">' . htmlspecialchars($zeile["name"]) . '</option>';
+        }
+        } catch (PDOException $e) {
+            exit("Fehler beim Laden der Kategorien: " . htmlspecialchars($e->getMessage()));
         }
         return $html;
     }

@@ -1,9 +1,12 @@
 <?php
 include "dbConf.php";
-
-$dbinst = new PDO("mysql:dbname=" . MYSQL_DB . ";host=" . MYSQL_HOST . ";charset=utf8", MYSQL_BENUTZER, MYSQL_KENNWORT);
+try {
+    $dbinst = new PDO("mysql:dbname=" . MYSQL_DB . ";host=" . MYSQL_HOST . ";charset=utf8", MYSQL_BENUTZER, MYSQL_KENNWORT);
+}  catch (PDOException $e) {
+    exit("Fehler beim Verbindungsaufbau: " . htmlspecialchars($e->getMessage()) . '</br><a href=javascript:history.back();>zurück</a>');
+}
 $dbinst->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//TODO: Die Tabellen werden auch angelegt, wenn sie schon exisiteren -> Durch
+//TODO: Termine und Kategorien werden mehrfach angelegt, wenn die Datei mehrfach aufgerufen wird.
 //TODO: mehrfaches LAden der createTable.php werden die defaultkategorien immer der bestehenden tabelle hinzugefügt!
 
 //Tabelle "termin" anlegen, wenn sie noch nicht existiert
@@ -29,7 +32,7 @@ try {
 } catch (PDOException $e) {
     // Nachricht bei Fehler
     exit("Fehler beim Anlegen der Database-Tabelle!" .
-        $e->getMessage());
+        htmlspecialchars($e->getMessage()));
 }
 
 //Tabelle "kategorie" anlegen, wenn sie noch nicht existiert
@@ -65,7 +68,7 @@ try {
 } catch (PDOException $e) {
     // Nachricht bei Fehler
     exit("Fehler beim anlegen der Database-Tabelle kategorie!" .
-        $e->getMessage());
+        htmlspecialchars($e->getMessage()));
 }
 
 ?>
