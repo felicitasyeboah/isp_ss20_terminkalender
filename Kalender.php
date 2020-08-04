@@ -1,9 +1,31 @@
 <?php
 
-include "Database.php";
+include "Database.php"; // Einbinden der Database.php
 
+/**
+ * Die Klasse Kalender erstellt ein Kalender-Objekt. Sie enthaelt Funktionen zur Oberfläche des Kalenders wie z.b.
+ * die Wochen- und Monatsansicht, sowie die Navigationsbar für die Filter und zum hinzufuegen eines neuen Termins.
+ *
+ */
 class Kalender
 {
+    /**
+     * @var int $monat ausgewaehlter Monat
+     * @var int $jahr ausgewaehltes Jahr
+     * @var int $woche ausgewaehlte Woche
+     * @var string[] $tageDerWoche Ueberschriften der Wochentage des Kalenders
+     * @var int $anzahlTage Anzahl der Tage des ausgewählten Monats.
+     * @var array $infoDatum Speichert Sekunden, Minuten, Stunden, Tag der Woche, Monat, Jahr, Tag des Jahres, Name der Woche,
+     *                          Name des Monats, Sekunden seit Unix Epoche für den 1. des ausgewaehlten Monats.
+     *
+     * @var int $tagDerWoche Wochentag, auf den der 1. des ausgewaehlten Monats faellt als int // Mo = 0, Di = 1, Mi = 2, Do = 3, Fr = 4, Sa = 5, So = -1/6
+     * @var false|int $timestamp_montag Zeitstempel des Beginns (Montags) der ausgewaehlten Woche
+     * @var false|int $timestamp_sonntag Zeitstempel des Endes (Sonntag) der ausgewaehlten Woche
+     * @var int $startWeek Erster Tag der Woche als Zahl
+     * @var int $katFilter ausgewaehlte KategorieId
+     * @var string $ansicht Ansicht (Wochen- oder Monatsansicht) des Kalenders, die Angezeigt wird.
+     *
+     */
     private $monat;
     private $jahr;
     private $woche;
@@ -13,9 +35,17 @@ class Kalender
     private $tagDerWoche;
     private $timestamp_montag;
     private $timestamp_sonntag;
+    private $startWeek;
     private $katFilter;
     private $ansicht;
 
+    /**
+     * Erstellt ein Kalender-Objekt aus uebergebener Woche, Monat, Jahr und Wochentagen.
+     * @param int $monat Uebergebener Monat
+     * @param int $jahr Uebergebenes Jahr
+     * @param int $woche Uebergebene Woche
+     * @param string[] $tageDerWoche Wochentage
+     */
     public function __construct($monat, $jahr, $woche, $tageDerWoche = array('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So',))
     {
         $this->monat = $monat;
@@ -23,64 +53,71 @@ class Kalender
         $this->woche = $woche;
         $this->tageDerWoche = $tageDerWoche; // Wochentage als String
         $this->anzahlTage = cal_days_in_month(CAL_GREGORIAN, $this->monat, $this->jahr); // wieviel Tage gibt es in dem Monat
-        $this->infoDatum = getdate(mktime(0, 0, 0, $monat, 1, $jahr));
+        $this->infoDatum = getdate(mktime(0, 0, 0, $monat, 1, $jahr)); // Informationen zum 1. des uebergebenen Monats
 
-        //minus 1 damit unser Kalender mit Montag beginnt und nicht mit Sonntag
-        $this->tagDerWoche = $this->infoDatum['wday'] - 1; // Welcher Wochentag am 1. eines Monats?
-        /*
-         * Montag einer Woche
-         */
+        // Welcher Wochentag am 1. eines Monats?
+        $this->tagDerWoche = $this->infoDatum['wday'] - 1;  //wday liefert ein int zurueck, wobei 0 für Sonntag, 1 für Montag usw. steht.
+        //minus 1 weil unser Kalender mit Montag beginnen soll // Mo = 0, Di = 1, Mi = 2, Do = 3, Fr = 4, Sa = 5, So = -1/6
+
+        // Montag einer Woche
         $this->timestamp_montag = strtotime("{$this->jahr}-W{$this->woche}");
-        $this->startWeek = (int)date("d", $this->timestamp_montag);
+        $this->startWeek = (int)date("d", $this->timestamp_montag); //Erster Tag der Woche als Zahl
 
-        /*
-         * Sonntag einer Woche
-         */
+        //Sonntag einer Woche
         $this->timestamp_sonntag = strtotime("{$this->jahr}-W{$this->woche}-7");
-        $this->endWeek = (int)date("d", $this->timestamp_sonntag);
     }
 
-    private function addNavBar() {
-      $kategorie = $GLOBALS["db"]->getAllKategorien();
+    /**
+     * HTML-Kontrukt zum Anzeigen des Filter- und Termin-hinzufuegen-Icons sowie zum Ausklappen der Filter- und Editkategorieleiste
+     *
+     * @return string
+     */
+    private function addNavBar()
+    {
+        $kategorie = $GLOBALS["db"]->getAllKategorien(); //holt alle vorhandenen Kategorien aus der Datenbank
 
-      $navBar  = '<div class="infobar nav eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
-      $navBar .= '<div class="infobar nav eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
-      $navBar .= '<div id="filter" class="invisible">';
-      $navBar .= '<div class="filterbar">';
-      $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" value="' . $this->katFilter . '">
+        $navBar = '<div class="infobar nav eventLink ico_filter" onclick="zeigeFilter()"></div>'; //\\ Toggle-Icon
+        $navBar .= '<div class="infobar nav eventLink ico_add" onclick="window.location.replace(\'editEvent.php\')"></div>'; //\\ Toggle-Icon
+        $navBar .= '<div id="filter" class="invisible">';
+        $navBar .= '<div class="filterbar">';
+        $navBar .= '<label>Kategorie: <input type="text" id="kategorie" list="kategorieName" value="' . $this->katFilter . '">
           <datalist id="kategorieName"> ' . $kategorie . '</datalist></label>';
-      $navBar .= '<div class="infobar eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
-      $navBar .= '<div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ',' . $this->woche . ')"></div>';
-      $navBar .= '</div>';
-      $navBar .= '<div class="ansichtbar">';
-      $navBar .= '<input type="radio" id="monat" name="ansicht" value="Monat" ';
-      if($this->ansicht == "Monat") $navBar .= 'checked';
-      $navBar .= '>';
-      $navBar .= '<label for="monat"> Monat</label> ';
-      $navBar .= '<input type="radio" id="woche" name="ansicht" value="Woche" ';
-      if($this->ansicht == "Woche") $navBar .= 'checked';
-      $navBar .= '>';
-      $navBar .= '<label for="woche"> Woche</label>';
-      $navBar .= '</div>';
+        $navBar .= '<div class="infobar eventLink ico_edit" onclick="bearbeiteKategorie()"></div>';
+        $navBar .= '<div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' . $this->monat . ',' . $this->woche . ')"></div>';
+        $navBar .= '</div>';
+        $navBar .= '<div class="ansichtbar">';
+        $navBar .= '<input type="radio" id="monat" name="ansicht" value="Monat" ';
+        if ($this->ansicht == "Monat") $navBar .= 'checked';
+        $navBar .= '>';
+        $navBar .= '<label for="monat"> Monat</label> ';
+        $navBar .= '<input type="radio" id="woche" name="ansicht" value="Woche" ';
+        if ($this->ansicht == "Woche") $navBar .= 'checked';
+        $navBar .= '>';
+        $navBar .= '<label for="woche"> Woche</label>';
+        $navBar .= '</div>';
 
-      return $navBar;
+        return $navBar;
 
     }
 
     /**
-     * Stellt einen Kalender in Monatsansicht dar
+     * Stellt den Kalender in der Monatsansicht dar
      */
     public function showMonth()
     {
         $ausgabe = '<table id="views">';
-        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="window.location.replace(\'index.php?m=' . ($this->monat - 1) . '&j=' . $this->jahr . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] . ' ' . $this->jahr . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="window.location.replace(\'index.php?m=' . ($this->monat + 1) . '&j=' . $this->jahr . '\')"></div>';
+        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="window.location.replace(\'index.php?m=' .
+            ($this->monat - 1) . '&j=' . $this->jahr . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] .
+            ' ' . $this->jahr . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="window.location.replace(\'index.php?m=' .
+            ($this->monat + 1) . '&j=' . $this->jahr . '\')"></div>';
 
-        //\\ Navigation (Filter, Ansichten)
+        // Navigation (Filter, Ansichten)
         $ausgabe .= $this->addNavBar();
-       
+
         $ausgabe .= '</caption>';
 
         $ausgabe .= '<thead><tr>';
+        //Erstelle für jeden Tag einer Woche (Mo, Di, Mi,...) eine Tabellenueberschrift
         foreach ($this->tageDerWoche as $tag) {
             $ausgabe .= '<th>' . $tag . '</th>';
         }
@@ -88,32 +125,36 @@ class Kalender
 
         $ausgabe .= '<tr>';
 
-        // Weil unser Kalender am Montag und nicht am Sonntag beginnt
+        // Wenn der erste Tag des Monats($tagDerWoche) auf einen Sonntag (=-1) fällt, setze tagDerWoche auf 6
+        // Mo = 0, Di = 1, Mi = 2, Do = 3, Fr = 4, Sa = 5, So = -1/6
         if ($this->tagDerWoche == -1) {
-            $this->tagDerWoche = 0;
+            $this->tagDerWoche = 6;
         }
         // Wenn der erste Tag des Monats nicht auf einen Montag faellt
-        // Ersten Tage des Kalenders auffuellen
+        // Ersten Tage des Kalenders auffuellen ( Montag gleich bedeutend mit 0)
+        // Wenn 1. Tag des Monats ein Montag, dann colspan = 0 = keine leeren Felder;
         if ($this->tagDerWoche > 0) {
             $ausgabe .= '<td colspan="' . $this->tagDerWoche . '"</td>';
         }
-        //Tag-Counter
+        // Tag-Counter
         $tagCounter = 1;
 
-
+        // Solange nicht die Anzahl der Tage des jeweiligen Monats erreicht ist
         while ($tagCounter <= $this->anzahlTage) {
 
-            //Zuruecksetzen vom tagDerWoche Counter
+            // Zuruecksetzen vom tagDerWoche Counter, damit nach 7 Tagen eine neue Reihe angefangen wird
             if ($this->tagDerWoche == 7) {
                 $this->tagDerWoche = 0;
                 $ausgabe .= '</tr><tr>';
             }
-
+            // Zelle des jeweiligen Tages des Monats
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
             $evfactory = new EventFactory();
+            // Holt alle Events des Tages
             $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter, $this->katFilter);
+            // Gibt alle Events des Tages am aktuellen Tag aus
             foreach ($events as &$event) {
                 $ausgabe .= $event->toHTML();
             }
@@ -148,12 +189,16 @@ class Kalender
     public function showWeek()
     {
         $ausgabe = '<table id="views">';
-        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ',' . ($this->woche - 1) . ')"></div><div id="zeitinfo">&nbsp;' . date("d.m.Y", $this->timestamp_montag). ' bis ' . date("d.m.Y", $this->timestamp_sonntag) . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="startFilter(' . $this->jahr . ',' .  $this->monat . ',' . ($this->woche + 1) . ')"></div>';
-        
-        //\\ Navigation (Filter, Ansichten)
+        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="startFilter(' . $this->jahr . ',' .
+            $this->monat . ',' . ($this->woche - 1) . ')"></div><div id="zeitinfo">&nbsp;' . date("d.m.Y", $this->timestamp_montag) .
+            ' bis ' . date("d.m.Y", $this->timestamp_sonntag) . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="startFilter(' .
+            $this->jahr . ',' . $this->monat . ',' . ($this->woche + 1) . ')"></div>';
+
+        // Navigation (Filter, Ansichten)
         $ausgabe .= $this->addNavBar();
 
         $ausgabe .= '<thead><tr>';
+        // Erstelle für jeden Tag einer Woche (Mo, Di, Mi,...) eine Tabellenueberschrift
         foreach ($this->tageDerWoche as $tag) {
             $ausgabe .= '<th>' . $tag . '</th>';
         }
@@ -161,16 +206,18 @@ class Kalender
 
         $ausgabe .= '<tr>';
 
-        //Tag-Counter
-        $tagCounter = date("d", $this->timestamp_montag);
-        $counter = 1;        
+        // Tag-Counter
+        $tagCounter = $this->startWeek; // Der Tag als Zahl an dem die Woche(der Montag der Woche) beginnt
+        $counter = 1;
         while ($counter <= 7) {
-            if($tagCounter > $this->anzahlTage) $tagCounter = 1;
+            if ($tagCounter > $this->anzahlTage) $tagCounter = 1;
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
             $evfactory = new EventFactory();
+            // Holt alle Events des Tages
             $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter, $this->katFilter);
+            // Gibt alle Events des Tages am aktuellen Tag aus
             foreach ($events as &$event) {
                 $ausgabe .= $event->toHTML();
             }
@@ -211,14 +258,16 @@ class Kalender
     public function getWoche(): int
     {
         return $this->woche;
-    } // Ende Funktion showDay()
-
-    public function setKatFilter($katId) {
-      $this->katFilter = $katId;
     }
 
-    public function setAnsicht($ansicht) {
-      $this->ansicht = $ansicht;
+    public function setKatFilter($katId)
+    {
+        $this->katFilter = $katId;
+    }
+
+    public function setAnsicht($ansicht)
+    {
+        $this->ansicht = $ansicht;
     }
 
 }
