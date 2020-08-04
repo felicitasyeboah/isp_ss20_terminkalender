@@ -329,7 +329,7 @@ class Event
      */
     public function getEndzeit()
     {
-        $tmpstr = substr($this->anfang, 11, 8);
+        $tmpstr = substr($this->ende, 11, 8);
         return $tmpstr;
     }
 
