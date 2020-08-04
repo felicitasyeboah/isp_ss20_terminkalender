@@ -209,14 +209,18 @@ class Kalender
         // Tag-Counter
         $tagCounter = $this->startWeek; // Der Tag als Zahl an dem die Woche(der Montag der Woche) beginnt
         $counter = 1;
+        $monat = $this->monat;
         while ($counter <= 7) {
-            if ($tagCounter > $this->anzahlTage) $tagCounter = 1;
+            if ($tagCounter > $this->anzahlTage) {
+                $tagCounter = 1;
+                $monat += 1;
+            }
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
             $evfactory = new EventFactory();
             // Holt alle Events des Tages
-            $events = $evfactory->getEventsonDay($this->jahr, $this->monat, $tagCounter, $this->katFilter);
+            $events = $evfactory->getEventsonDay($this->jahr, $monat, $tagCounter, $this->katFilter);
             // Gibt alle Events des Tages am aktuellen Tag aus
             foreach ($events as &$event) {
                 $ausgabe .= $event->toHTML();
