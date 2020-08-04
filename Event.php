@@ -6,7 +6,7 @@ require_once("EventFactory.php");
  *  Umsetzung der Anforderungen "Ansicht der Details" und "Löschen eines Termins".
  * 
  * In beiden Fällen wird das betroffene Objekt mit Hilfe der ID aus der Datenbank erschaffen.
- * Anschließend erfolt die Unterscheidung und entsprechende Durchführung der Funktionalität.
+ * Anschließend erfolgt die Unterscheidung und entsprechende Durchführung der Funktionalität.
  */
 if (isset($_GET["details"]) || isset($_GET["delete"])) {
     $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
