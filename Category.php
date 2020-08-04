@@ -1,6 +1,12 @@
 <?php
 require_once "EventFactory.php";
 
+/**
+ *  Umsetzung der Anforderung "Löschen einer Kategorie".
+ * 
+ * Zuerst wird das betroffene Objekt mit Hilfe der ID aus der Datenbank erschaffen.
+ * Anschließend erfolgt Durchführung der Funktionalität.
+ */
 if (isset($_GET["deletecat"])) {
   $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
   if (isset($id)) {
@@ -21,49 +27,103 @@ if (isset($_GET["deletecat"])) {
   }
 }
 
+/**
+ * Category
+ */
 class Category
 {
     private $id;
     private $name;
     private $farbe;
+
+    /**
+     * Entwurfsmuster Observer
+     *
+     * @var Termin[] Array aus Termin-Objekten
+     */
     private $observers = [];
 
     public function __construct() {}
     public function __set($name, $value) {}
     public function __get($name) {return $this->$name;}
 
+        
+    /**
+     * Im Grunde: Kombinierte setter-Funktion
+     *
+     * @param  string $name
+     * @param  string $farbe
+     * @return void
+     */
     public function addDetails($name, $farbe) {
       $this->name = $name;
       $this->farbe = $farbe;
     }
-
+    
+    /**
+     * Aktualisieren dieses Kategorie-Datensatzes.
+     *
+     * @return void
+     */
     public function updateCategory() {
 
         $sql = "UPDATE `kategorie` SET `farbe` = '" . $this->farbe . "', `name` = '". $this->name ."' WHERE `kategorie`.`id` =" . $this->id . "";
         $GLOBALS["db"]->update($sql);
     }
-
+    
+    /**
+     * Löschen einer Kategorie aus der Datenbank.
+     *
+     * @return void
+     */
     public function deleteCategory() {
 
         $sql = "DELETE FROM `kategorie` WHERE `kategorie`.`id` =" . $this->id . "";
         $GLOBALS["db"]->update($sql);
     }
+        
+    /**
+     * Hinzufügen einer neuen Kategorie in der Datenbank
+     *
+     * @param  string $name
+     * @param  string $farbe
+     * @return void
+     */
     public function addCategory($name, $farbe) {
         $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $name . "','" . $farbe . "')"; //SQL Statement
         $GLOBALS["db"]->insert($sql);
         echo "Neue Category wurde in der Database eingetragen.<br/>";
     }
+        
+    /**
+     * Entwurfsmuster Observer
+     * 
+     * Ein Termin-Objekt wird zum Observer-Array hinzugefügt.
+     *
+     * @param  Termin $observer
+     * @return void
+     */
     public function attach($observer)
     {
         array_push($this->observers, $observer);
     }
-   
+       
+    /**
+     * Entwurfsmuster Observer
+     * 
+     * Benachrichtigen aller beobachteten Objekten.
+     *
+     * @return void
+     */
     public function notify()
     {
       foreach( $this->observers as $observer ) {
         $observer->update();
       }
     }
+
+  
+    //\\\\\\\\\\\\\\\\ GETTER- und SETTER-Methoden \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     /**
      * @return mixed
@@ -113,5 +173,3 @@ class Category
         $this->farbe = $farbe;
     }
 }
-
-?>
