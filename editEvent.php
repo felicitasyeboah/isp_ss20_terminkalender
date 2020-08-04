@@ -3,14 +3,22 @@ require_once "Database.php";
 require_once "EventFactory.php";
 $ausgabe = '';
 
-$defaultTime = "00:00";
-$ganztagTime = "23:59";
-if (isset($_GET["id"])) {
-    $factory = new EventFactory();
-    $termin = $factory->getEventbyId($_GET["id"]);
-    $tempid = $_GET["id"];
-    $group = ($termin->isGroupEvent()) ? $termin->getGruppe() : "";
+$defaultTime = "00:00"; // Standardstartzeit, die beim Setzen eines Ganztages ausgewählt wird
+$ganztagTime = "23:59"; // Standardendzeit, die beim Setzen eines Ganztages ausgewählt wird
 
+/*
+ * Es wird geprüft, ob beim Ausführen der Seite eine GET-Variable mitgesendet wurde. Anhand dessen wird geprüft, ob ein
+ * vorhandener Termin bearbeitet wird oder ob ein neuer Termin erstellt wird.
+ *
+ * Wenn ein Termin bearbeitet wird, wird dessen ID mitgegeben. Hier wird geprüft, ob eine ID vorhanden ist.
+ * Wenn ja, dann:
+ */
+if (isset($_GET["id"])) {
+    $factory = new EventFactory(); //erstelle neue Fabrik
+    $termin = $factory->getEventbyId($_GET["id"]); // Hole den Termin anhand der uebergebenen ID
+    $tempid = $_GET["id"]; // Setze uebergebene ID temporaer
+    // Lade das Formular mit allen zu dem Termin bekannten Werten vor
+    $group = ($termin->isGroupEvent()) ? $termin->getGruppe() : "";
     $titel = ($termin->getTitel() !== null) ? $termin->getTitel() : "";
     $beschreibung = ($termin->getBeschreibung() !== null) ? $termin->getBeschreibung() : "";
     $anfangsdatum = ($termin->getAnfangsdatum() !== null) ? $termin->getAnfangsdatum() : date('Y-m-d');
@@ -19,7 +27,6 @@ if (isset($_GET["id"])) {
     $endzeit = ($termin->getEndzeit() !== null) ? $termin->getEndzeit() : $ganztagTime;
     $ort = ($termin->getOrt() !== null) ? $termin->getOrt() : "";
     $kategorie = $db->getAllKategorien();
-
     $katVal = ($termin->getKategorieId() !== null) ? $termin->getKategorieId() : "";
     $katId = $termin->getKategorieId();
     if(!empty($katId)) {
@@ -27,8 +34,12 @@ if (isset($_GET["id"])) {
     } else {
         $katColor = "#ffffff";
     }
-
+/*
+ * Wenn keine ID mitgesendet wurde, dann wird ein neuer Termin vorbereitet:
+ */
 } else {
+    // Variablen, die die eingetragen Daten des Formulars zwischenspichern, sollte es beim Absenden zum Fehler kommen
+    // (fehlerhafte regexprüfung z.b.)
     $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
     $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
     $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
@@ -36,19 +47,18 @@ if (isset($_GET["id"])) {
     $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : date('Y-m-d');
     $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $ganztagTime;
     $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
-    $kategorie = $db->getAllKategorien();
+    $kategorie = $db->getAllKategorien(); // Laedt alle vorhanden Kategorien
     $katVal = "";
     $katColor = "#ffffff";
     $tempid = "";
     $group = "";
 }
-
-
+// Formular zum editieren und Neuerstellen eines Termins
 $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">
         <input type="text" style="display: none;" id="tempid" name="tempid" value="' . $tempid . '">
         <input type="text" style="display: none;" id="group" name="group" value="' . $group . '">
         <label>Titel:<var>* </var><br/><input size="65px" type="text" name="titel" value="' . $titel . '"><br><br></label>
-        <label for="beschreibung">Beschreibung des Termins<var>* </var><br/>
+        <label for="beschreibung">Beschreibung des Termins <br/>
             <textarea id="beschreibung" name=" beschreibung" rows="10" cols="60">' . $beschreibung . '</textarea>
         </label>
         <br>
@@ -58,8 +68,8 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
         <label>Enddatum: <input size="50px" type="date" name="enddatum" id="enddatum" value="' . $enddatum . '"></label>
         <label> Endzeit: <input size="50px" type="time" name="endzeit" id="endzeit" value="' . $endzeit . '"><br><br></label>
         <label for="ganztag">ganztaegig: <input size="50px" type="checkbox" name="ganztag" id="ganztag"
-                                                value="1" checked onclick="setTime(this)"><br><br></label>
-        <label>Ort:<var>* </var><input size="50px" type="text" name="ort" value="' . $ort . '"><br><br></label>
+                                                checked onclick="setTime(this)"><br><br></label>
+        <label>Ort: <input size="50px" type="text" name="ort" value="' . $ort . '"><br><br></label>
 
         <label>Kategorie: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)" value="' . $katVal . '"/>
             <datalist id="kategorieName">
@@ -78,36 +88,30 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
         <button type="submit" name="sendEventBtn" value="absenden">Absenden</button>&nbsp;&nbsp;
         <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">
     </form><p></p>';
+// Wenn das Formular abgesendet wurde
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-//\\ Formular auf sinnvolle/korrekte Eingaben ueberpruefen
     $tmpkat = $_POST['kategorie'];
-    $regexTitel = '/^[a-zA-ZüöäÜÖÄß0-9\s\-.!\?]+$/i';
-    $regexOrt = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i';
-    $regexKategorie = '/^[a-zA-ZüöäÜÖÄß0-9\s\-]+$/i';
-    if (empty($titel)) {
-        $ausgabe = 'Bitte einen Titel eingeben.' . $formular;
-    } elseif (!preg_match($regexTitel, $_POST['titel'])) {
-        echo "titel: " . $_POST['titel'];
-        $ausgabe = 'Bitte nur Buchstaben und Zahlen im Titel eingeben.' . $formular;
-    } elseif (!empty($ort) && (!preg_match($regexOrt, $_POST['ort']))) {
-        echo "Ort: " . $_POST['ort'];
-        $ausgabe = 'Ort darf nur Buchstaben und "-" enthalten,' . $formular;
-    } elseif (strlen($_POST["beschreibung"]) > 500) {
-        echo 'Beschreibung ist zu lang. Max. 500 Zeichen.' . $formular;
-    }
 
-    elseif (!empty($tmpkat) && (!preg_match($regexKategorie, $_POST['kategorie']))) {
-        echo "Kategorie: " . $_POST['kategorie'];
-        $ausgabe = 'Kategorie darf nur Buchstaben und "-" enthalten,' . $formular;
-        //Wenn Eingaben in Ordnung
+    // Formular auf sinnvolle/korrekte Eingaben ueberpruefen
+    $regexTitel = '/^[a-zA-ZüöäÜÖÄß0-9\s\-,.\/\:!\?"]+$/i'; // nur Buchstaben und Zahlen und - , . : ! ? /
+    $regexOrt = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i'; // nur Buchstaben und -
+    $regexKategorie = '/^[a-zA-ZüöäÜÖÄß0-9\s\-]+$/i'; // nur Buchstaben, Zahlen und -
+    if (empty($titel)) {
+        $ausgabe = '<p style="color:#ff0000;">Fehler bei Titel: Bitte einen Titel eingeben.</p>' . $formular;
+    } elseif (!preg_match($regexTitel, $_POST['titel'])) {
+        $ausgabe = '<p style="color:#ff0000;">Fehler bei Titel: Bitte nur Buchstaben, Zahlen und folgende Sonderzeichen in den Titel eingeben: " - , . : ! ? / "</p>' . $formular;
+    } elseif (!empty($ort) && (!preg_match($regexOrt, $_POST['ort']))) {
+        $ausgabe = '<p style="color:#ff0000;">Fehler bei Ort: Ort darf nur Buchstaben und "-" enthalten,</p>' . $formular;
+    } elseif (strlen($_POST["beschreibung"]) > 500) {
+        echo '<p style="color:#ff0000;">Beschreibung ist zu lang. Max. 500 Zeichen.</p>' . $formular;
     }
-   /* elseif(!preg_match($regexKategorie, $_POST['kategorie']))
-    {
-        echo "Kategorie: " . $_POST['kategoriename'];
-        $ausgabe = 'Kategorie darf nur Buchstaben, Zahlen und "-" enthalten'  . $html;
-    }*/
+    elseif (!empty($tmpkat) && (!preg_match($regexKategorie, $_POST['kategorie']))) {
+        $ausgabe = '<p style="color:#ff0000;">Kategorie darf nur Buchstaben, Zahlen und "-" enthalten,</p>' . $formular;
+    }
+    // Wenn Eingaben in Ordnung
     else {
+        // Wenn ganztag gesetzt angehakt wurde
         if (isset($_POST['ganztag'])) {
             $tmpGanztag = 1;
 
@@ -115,14 +119,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $tmpGanztag = 0;
         }
 
-        //Datum und Zeit für Eintrag in Database vorbereiten
+        // Datum und Zeit für Eintrag in Database vorbereiten
         $anfang = $_POST['anfangsdatum'] . " " . $_POST['anfangszeit'];
         $ende = $_POST['enddatum'] . " " . $_POST['endzeit'];
         $factory = new EventFactory();
         $termine = $factory->createEvent($_POST['tempid'], $_POST['titel'], $_POST['beschreibung'], $anfang, $ende, $_POST['ort'], $_POST['kategorie'], $_POST['farbe'], $tmpGanztag);
 
-        //\\ wurde eine neue Kategorie eingegeben?
+        // wurde eine neue Kategorie eingegeben?
         $newkatid = null;
+        //Wenn die Kategorie noch nicht vorhanden ist und ueberhaupt eine Kategorie eingegeben wurde
         if ($termine[0]->getKategorie() == null && !empty($_POST['kategorie'])) {
           $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $_POST['kategorie'] . "','" . $_POST['farbe'] . "')";
           $GLOBALS["db"]->insert($sql);
@@ -135,13 +140,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
           if ($newkatid !== null) {
             $termin->setKategorieid($newkatid);
           }
-          
+          // wurde eine neuer Termin eingeben?
           if($_POST['tempid'] == "") {
             $termin->addEvent();
+            // wurde ein Termin bearbeitet?
           } else {
+              // Ist ist es kein Event ueber mehrere Tage?
               if($_POST['group'] == "") {
                 $termin->updateEvent();
                 } else {
+                  // sonst
                     $termin->addEvent();
                   }
             }
