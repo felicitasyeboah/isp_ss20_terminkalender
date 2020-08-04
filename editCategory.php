@@ -60,7 +60,7 @@ $html .= '<br><br><br><input type="button" name="home" value="zurück zu Startse
          } else {
              $newCat = new Category();
              $newCat->addCategory($_POST['neueKat'], $_POST['neueFarbe']);
-             $ausgabe .= 'Neue Kategorie wurde angelegt. <br><br><input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
+             $ausgabe .= '<br><br><input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')"></form>';
          }
      }
 

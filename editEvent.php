@@ -148,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
               // Ist ist es kein Event ueber mehrere Tage?
               if($_POST['group'] == "") {
                 $termin->updateEvent();
+                echo $termin->getTitel(). " wurde in Datenbank geaendert.<br/>";
                 } else {
                   // sonst
                     $termin->addEvent();
