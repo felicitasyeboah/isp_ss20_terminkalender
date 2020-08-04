@@ -107,9 +107,9 @@ class Kalender
     {
         $ausgabe = '<table id="views">';
         $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="window.location.replace(\'index.php?m=' .
-            ($this->monat - 1) . '&j=' . $this->jahr . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] .
+            ($this->monat - 1) . '&j=' . $this->jahr . '&kat=' . $this->katFilter . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] .
             ' ' . $this->jahr . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="window.location.replace(\'index.php?m=' .
-            ($this->monat + 1) . '&j=' . $this->jahr . '\')"></div>';
+            ($this->monat + 1) . '&j=' . $this->jahr . '&kat=' . $this->katFilter . '\')"></div>';
 
         // Navigation (Filter, Ansichten)
         $ausgabe .= $this->addNavBar();
@@ -243,6 +243,114 @@ class Kalender
         echo $ausgabe;
 
     } // Ende Funktion showWeek()
+
+    /**
+     * Stellt einen Kalender in einer funktionierenden ;) Wochenansicht dar
+     */
+    public function showWeekcorrected()
+    {
+        $date = new DateTime();
+
+        //\\ ein paar Variablen vorbereiten
+
+        //\\ Anfangszeit bestimmen
+        $date->setISODate($this->jahr, $this->woche);
+        $amonat = $date->format('n');
+        $ajahr  = $date->format('Y');
+        $aTag  = $date->format('j');
+        $adateausgabe = $date->format("d.m.Y");
+
+        //\\ Endezeit bestimmen
+        $date->setISODate($this->jahr, $this->woche, 7);
+        $emonat = $date->format('n');
+        $ejahr  = $date->format('Y');
+        $eTag  = $date->format('j');
+        $edateausgabe = $date->format("d.m.Y");
+
+        //\\ Steuerungsvariable
+        //$fwoche = ($ejahr > $ajahr) ? 1 : ($this->woche + 1);
+        $maxCW = $this->getLastCw($ejahr);
+        $fwoche = $this->woche + 1;
+        if($fwoche > $maxCW)
+        {
+          $fwoche = 1;
+          $ejahr += 1;
+          $monat = 1;
+        }
+        $bwoche = $this->woche - 1;
+        if($bwoche <= 0)
+        {
+          $bwoche = $this->getLastCw($ajahr);
+          $ajahr -= 1;
+          $monat = 12;
+        }
+        //$bwoche = ($ejahr > $ajahr) ? $maxCW : ($this->woche - 1);
+
+        $ausgabe = '<table id="views">';
+        $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="startFilter(' . $ajahr . ',' .
+            $amonat . ',' . $bwoche . ')"></div><div id="zeitinfo">&nbsp;' . $adateausgabe .
+            ' bis ' . $edateausgabe . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="startFilter(' .
+            $ejahr . ',' . $emonat . ',' . $fwoche . ')"></div>';
+        /*$ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="startFilter(' . $ajahr . ',' .
+            $amonat . ',' . $bwoche . ')"></div><div id="zeitinfo">&nbsp;' . date("d.m.Y", $date->setISODate($this->jahr, $this->woche)) .
+            ' bis ' . date("d.m.Y", $date->setISODate($this->jahr, $this->woche, 7)) . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="startFilter(' .
+            $ejahr . ',' . $emonat . ',' . $fwoche . ')"></div>';*/
+
+        // Navigation (Filter, Ansichten)
+        $ausgabe .= $this->addNavBar();
+
+        $ausgabe .= '<thead><tr>';
+        // Erstelle für jeden Tag einer Woche (Mo, Di, Mi,...) eine Tabellenueberschrift
+        foreach ($this->tageDerWoche as $tag) {
+            $ausgabe .= '<th>' . $tag . '</th>';
+        }
+        $ausgabe .= '</thead></tr>';
+
+        $ausgabe .= '<tr>';
+
+        // Tag-Counter
+        $tagCounter = $aTag; // Der Tag als Zahl an dem die Woche(der Montag der Woche) beginnt
+        $counter = 1;
+        $monat = $amonat;
+        $jahr = $ajahr;
+        while ($counter <= 7) {
+            if ($tagCounter > $this->anzahlTage) {
+                $tagCounter = 1;
+                $monat = $emonat;
+                $jahr = ($ajahr != $ejahr) ? $ajahr : $ejahr;
+            }
+
+            $ausgabe .= '<td><span class="nr">' . $tagCounter;
+
+            //\\ Events anzeigen
+            $evfactory = new EventFactory();
+            // Holt alle Events des Tages
+            $events = $evfactory->getEventsonDay($jahr, $monat, $tagCounter, $this->katFilter);
+            // Gibt alle Events des Tages am aktuellen Tag aus
+            foreach ($events as &$event) {
+                $ausgabe .= $event->toHTML();
+            }
+            unset($event); // Entferne die Referenz auf das letzte Element
+
+            $ausgabe .= '</span></td>';
+
+            $tagCounter++;
+            $counter++;
+        } // Ende While
+
+        $ausgabe .= '<tbody id="event"></tbody>';
+        $ausgabe .= '</tr></table>';
+
+        echo $ausgabe;
+
+    } // Ende Funktion showWeek()
+
+    private function getLastCw($jahr)
+    {
+        $date = new DateTime;
+        $date->setISODate($jahr, 53);
+        return ($date->format("W") === "53" ? 53 : 52);
+    }
 
     /**
      * @return mixed
