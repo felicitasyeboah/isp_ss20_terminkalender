@@ -208,13 +208,17 @@ class Kalender
 
         // Tag-Counter
         $tagCounter = $this->startWeek; // Der Tag als Zahl an dem die Woche(der Montag der Woche) beginnt
+        $date = new DateTime();
         $counter = 1;
-        $monat = $this->monat;
         while ($counter <= 7) {
             if ($tagCounter > $this->anzahlTage) {
                 $tagCounter = 1;
-                $monat += 1;
             }
+
+            //\\ Anhand der Kalenderwoche den Monat bestimmen ($counter ist ein Offset, um auch den Monatsübergang zu erwischen)
+            $date->setISODate($this->jahr, $this->woche, $counter);
+            $monat = $date->format('n');
+       
             $ausgabe .= '<td><span class="nr">' . $tagCounter;
 
             //\\ Events anzeigen
