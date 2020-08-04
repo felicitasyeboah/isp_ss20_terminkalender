@@ -2,11 +2,19 @@
 
 require_once("EventFactory.php");
 
+/**
+ *  Umsetzung der Anforderungen "Ansicht der Details" und "Löschen eines Termins".
+ * 
+ * In beiden Fällen wird das betroffene Objekt mit Hilfe der ID aus der Datenbank erschaffen.
+ * Anschließend erfolt die Unterscheidung und entsprechende Durchführung der Funktionalität.
+ */
 if (isset($_GET["details"]) || isset($_GET["delete"])) {
     $id = isset($_GET["id"]) ? intval($_GET["id"]) : null;
     if (isset($id)) {
         $factory = new EventFactory();
         $termin = $factory->getEventbyId($id);
+    } else {
+        echo "Keine ID gesetzt!";
     }
 
     if (isset($termin) && isset($_GET["details"])) {
@@ -20,7 +28,6 @@ if (isset($_GET["details"]) || isset($_GET["delete"])) {
         echo $ausgabe;
     }
 }
-
 
 /**
  * Class Event
@@ -39,22 +46,24 @@ class Event
     private $farbe;
     private $gruppe;
 
-//\\ neuen Konstruktor zum Erstellen eines Termins verwenden
-
     /**
      * Event constructor.
      */
     public function __construct()
     {
-        //\\ holen des Category-Datensatzes für diesen Event
+        //\\ Die Kategorie zum Termin wird, als Objekt hinzugefügt.
         if (isset($this->kategorieid)) {
             $this->kategorie = $GLOBALS["db"]->getKategorie($this->kategorieid);
         }
     }
 
+
     /**
-     * @param $name
-     * @param $farbe
+     * Setzen der Eigenschaften eines neu erstellten Kategorie-Objekts.
+     *
+     * @param  string $name
+     * @param  string $farbe
+     * @return void
      */
     public function addKategorie($name, $farbe)
     {
@@ -63,8 +72,11 @@ class Event
     }
 
 
+
     /**
-     * Fuegt ein Event hinzu
+     * Fügt dieses Objekt in die Datenbank ein.
+     *
+     * @return void
      */
     public function addEvent()
     {
@@ -81,39 +93,37 @@ class Event
                 $sql .= ",'" . $this->gruppe . "')";
             }
 
-             $GLOBALS["db"]->insert($sql);
+            $GLOBALS["db"]->insert($sql);
             echo "Event wurde in der Database eingetragen.<br/>";
-
         } catch (Exception $e) { // Wenn ein Fehler beim Eintragen des Titels in die DB auftritt, wird er im Catchblock
             // gecatched und der Fehler ausgegeben.
-            echo "Fehler: " . $e->getMessage();
+            echo "Fehler beim Hinzufügen des Events: " . $e->getMessage();
         }
     }
 
+
     /**
-     * Loescht ein Event
+     * Löscht dieses Event aus der Datenbank.
+     * 
+     * Sofern der Termin zu einer Gruppe von Terminen gehört, wird die komplette Gruppe gelöscht.
+     *
+     * @return void
      */
     public function deleteEvent()
     {
-        if($this->isGroupEvent()) {
-          $sql = "DELETE FROM `termine` WHERE `gruppe` = '" . $this->gruppe . "'";
+        if ($this->isGroupEvent()) {
+            $sql = "DELETE FROM `termine` WHERE `gruppe` = '" . $this->gruppe . "'";
         } else {
-          $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
+            $sql = "DELETE FROM `termine` WHERE `id` = " . $this->id . "";
         }
         $GLOBALS["db"]->delete($sql);
     }
 
-    /**
-     * It is called by the Subject, usually by SplSubject::notify()
-     */
-    public function update()
-    {
-        $this->kategorieid = null;
-        $this->updateEvent();
-    }
 
     /**
-     * Updates einen Termin
+     * Ändet die Daten dieses Objekts in der Datenbank.
+     *
+     * @return void
      */
     public function updateEvent()
     {
@@ -127,28 +137,38 @@ class Event
         if ($this->gruppe === null) {
             $tmpGru = "NULL";
         } else {
-            $tmpGru .= ",'" . $this->gruppe . "')";
+            $tmpGru .= "'" . $this->gruppe . "'";
         }
         $sql = "UPDATE `termine` SET `anfang` = '" . $this->anfang . "', `ende` = ' $this->ende ', `ganztag` = $this->ganztag , `titel` = '" . $this->titel . "'
         , `beschreibung` = '" . $this->beschreibung . "', `ort` = '" . $this->ort . "' , `kategorieid` = " . $tmpKat . " , `gruppe` = " . $tmpGru . " WHERE `termine`.`id` =" . $this->id . "";
-
 
         $GLOBALS["db"]->update($sql);
     }
 
     /**
-     * @param $name
-     * @param $value
+     * Entwurfsmuster Observer
+     * 
+     * Diese Funktion wird aufgerufen (benachrichtigt), wenn das Objekt im Observer-Array vorhanden ist
+     *
+     * @return void
      */
-    public function __set($name, $value) { }
+    public function update()
+    {
+        $this->kategorieid = null;
+        $this->updateEvent();
+    }
 
-    //\\ gibt den Event in HTML-Ansicht zurück
+
+    /*public function __set($name, $value)
+    {
+    }*/
 
     /**
-     * gibt den Event in HTML-Ansicht zurück
+     * Gibt das Event in HTML-Ansicht zurück.
+     * 
      * @return string
      */
-    public function toHTML(): string
+    public function toHTML()
     {
         $html = '<div class="event"';
         if (isset($this->kategorie)) $html .= ' style="border-top: Solid 6px ' . $this->kategorie->farbe . '"';
@@ -161,10 +181,11 @@ class Event
     }
 
     /**
-     * gibt den Eventdetails in HTML-Ansicht zurück
+     * Gibt die Eventdetails in HTML-Ansicht zurück.
+     * 
      * @return string
      */
-    public function toHTMLDetails(): string
+    public function toHTMLDetails()
     {
         //\\ Kopfzeile / Navigation
         $html = '<tr><td colspan="10">';
@@ -175,7 +196,7 @@ class Event
         $html .= '<span class="eventTitle">' . $this->titel . '</span>';
         $html .= '</th>';
         $html .= '<td>';
-        $html .= '<div class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id=' . $this->id .'\')"></div>';
+        $html .= '<div class="eventLink ico_edit" onclick="window.location.replace(\'editEvent.php\?id=' . $this->id . '\')"></div>';
         $html .= '</td>';
         $html .= '<td>';
         $html .= '<div class="eventLink ico_del" onclick="window.location.replace(\'Event.php\?delete&id=' . $this->id . '\')"></div>';
@@ -198,15 +219,22 @@ class Event
         return $html;
     }
 
+        
     /**
-     * Gehört der Termin zu einer Gruppe?
+     * Gehört das Event zu einer Gruppe?
+     *
+     * @return bool
      */
-    public function isGroupEvent() : bool {
-      return ($this->gruppe === null) ? false : true;
+    public function isGroupEvent()
+    {
+        return ($this->gruppe === null) ? false : true;
     }
 
+
+    //\\\\\\\\\\\\\\\\ GETTER- und SETTER-Methoden \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -370,7 +398,7 @@ class Event
     }
 
     /**
-     * @return mixed
+     * @return Kategorie
      */
     public function getKategorie()
     {
@@ -378,7 +406,7 @@ class Event
     }
 
     /**
-     * @param mixed $kategorie
+     * @param Kategorie $kategorie
      */
     public function setKategorie($kategorie)
     {
@@ -410,13 +438,10 @@ class Event
     }
 
     /**
-     * @param mixed $farbe
+     * @param mixed
      */
     public function setGruppe($gruppe)
     {
         $this->gruppe = $gruppe;
     }
-
 }
-
-?>
