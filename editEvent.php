@@ -3,9 +3,6 @@ require_once "Database.php";
 require_once "EventFactory.php";
 $ausgabe = '';
 
-$defaultTime = "00:00"; // Standardstartzeit, die beim Setzen eines Ganztages ausgewählt wird
-$ganztagTime = "23:59"; // Standardendzeit, die beim Setzen eines Ganztages ausgewählt wird
-
 /*
  * Es wird geprüft, ob beim Ausführen der Seite eine GET-Variable mitgesendet wurde. Anhand dessen wird geprüft, ob ein
  * vorhandener Termin bearbeitet wird oder ob ein neuer Termin erstellt wird.
@@ -26,6 +23,12 @@ if (isset($_GET["id"])) {
     $enddatum = ($termin->getEnddatum() !== null) ? $termin->getEnddatum() : date('Y-m-d');
     $endzeit = ($termin->getEndzeit() !== null) ? $termin->getEndzeit() : $ganztagTime;
     $ort = ($termin->getOrt() !== null) ? $termin->getOrt() : "";
+    if($termin->getGanztag() == 1) {
+        $ganztag = "checked";
+    }
+    else  {
+        $ganztag = 0;
+    }
     $kategorie = $db->getAllKategorien();
     $katVal = ($termin->getKategorieId() !== null) ? $termin->getKategorieId() : "";
     $katId = $termin->getKategorieId();
@@ -43,10 +46,11 @@ if (isset($_GET["id"])) {
     $titel = isset($_POST["titel"]) ? $_POST["titel"] : "";
     $beschreibung = isset($_POST["beschreibung"]) ? $_POST["beschreibung"] : "";
     $anfangsdatum = isset($_POST["anfangsdatum"]) ? $_POST["anfangsdatum"] : date('Y-m-d');
-    $anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : $defaultTime;
+    $anfangszeit = isset($_POST["anfangszeit"]) ? $_POST["anfangszeit"] : date('H:i'); //$defaultTime;
     $enddatum = isset($_POST["enddatum"]) ? $_POST["enddatum"] : date('Y-m-d');
-    $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : $ganztagTime;
+    $endzeit = isset($_POST["endzeit"]) ? $_POST["endzeit"] : date('H:i', time() + (60*60));//$ganztagTime;
     $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
+    $ganztag = "";
     $kategorie = $db->getAllKategorien(); // Laedt alle vorhanden Kategorien
     $katVal = "";
     $katColor = "#ffffff";
@@ -68,7 +72,7 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
         <label>Enddatum: <input size="50px" type="date" name="enddatum" id="enddatum" value="' . $enddatum . '"></label>
         <label> Endzeit: <input size="50px" type="time" name="endzeit" id="endzeit" value="' . $endzeit . '"><br><br></label>
         <label for="ganztag">ganztaegig: <input size="50px" type="checkbox" name="ganztag" id="ganztag"
-                                                checked onclick="setTime(this)"><br><br></label>
+                                           '.$ganztag.'    onclick="setTime(this)"><br><br></label>
         <label>Ort: <input size="50px" type="text" name="ort" value="' . $ort . '"><br><br></label>
 
         <label>Kategorie: <input type="text" name="kategorie" list="kategorieName" oninput="loadColor(this.value)" value="' . $katVal . '"/>
@@ -84,7 +88,6 @@ $formular = '<form id="kalender" action="' . htmlspecialchars($_SERVER['PHP_SELF
         <br/>
         <br/>
         <br/>
-        <!--<button type="reset" name="resetbutton" value="Formular zur&uuml;cksetzen">Formular zur&uuml;cksetzen</button>-->
         <button type="submit" name="sendEventBtn" value="absenden">Absenden</button>&nbsp;&nbsp;
         <input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">
     </form><p></p>';
@@ -102,12 +105,18 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     } elseif (!preg_match($regexTitel, $_POST['titel'])) {
         $ausgabe = '<p style="color:#ff0000;">Fehler bei Titel: Bitte nur Buchstaben, Zahlen und folgende Sonderzeichen in den Titel eingeben: " - , . : ! ? / "</p>' . $formular;
     } elseif (!empty($ort) && (!preg_match($regexOrt, $_POST['ort']))) {
-        $ausgabe = '<p style="color:#ff0000;">Fehler bei Ort: Ort darf nur Buchstaben und "-" enthalten,</p>' . $formular;
+        $ausgabe = '<p style="color:#ff0000;">Fehler bei Ort: Ort darf nur Buchstaben und "-" enthalten.</p>' . $formular;
     } elseif (strlen($_POST["beschreibung"]) > 500) {
         echo '<p style="color:#ff0000;">Beschreibung ist zu lang. Max. 500 Zeichen.</p>' . $formular;
     }
     elseif (!empty($tmpkat) && (!preg_match($regexKategorie, $_POST['kategorie']))) {
-        $ausgabe = '<p style="color:#ff0000;">Kategorie darf nur Buchstaben, Zahlen und "-" enthalten,</p>' . $formular;
+        $ausgabe = '<p style="color:#ff0000;">Kategorie darf nur Buchstaben, Zahlen und "-" enthalten.</p>' . $formular;
+    }
+    elseif($_POST['anfangsdatum'] > $_POST['enddatum']) {
+        $ausgabe = '<p style="color:#ff0000;">Fehler: Enddatum muss nach dem Anfangsdatum liegen.</p>' . $formular;
+    }
+    elseif($_POST['anfangsdatum'] == $_POST['enddatum'] && $_POST['anfangszeit'] > $_POST['endzeit']) {
+        $ausgabe = '<p style="color:#ff0000;">Fehler: Endzeit muss nach dem Anfangszeit liegen.</p>' . $formular;
     }
     // Wenn Eingaben in Ordnung
     else {
@@ -203,8 +212,6 @@ include "inc/footer.inc.php";
         if (element.checked) {
             document.getElementById("anfangszeit").setAttribute("value", "00:00")
             document.getElementById("endzeit").setAttribute("value", timeGanztag)
-            document.getElementById("anfangsdatum").setAttribute("value", datum);
-            document.getElementById("enddatum").setAttribute("value", datum);
 
         } else {
             document.getElementById("anfangszeit").setAttribute("value", uhrzeit);
