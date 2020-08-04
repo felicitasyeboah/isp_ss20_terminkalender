@@ -159,8 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
           $termine[0]->deleteEvent();
         }
 
-        $ausgabe .= '<h3> ' . htmlspecialchars($termin->getTitel()) . ' wurde eingetragen!</h3>' . $formular;
-        //}
+        $ausgabe .= '<input type="button" name="home" value="zurück zu Startseite" onclick="window.location.replace(\'index.php\')">';
     }
 } else {
     $ausgabe = $formular;
