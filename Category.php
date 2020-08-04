@@ -92,7 +92,7 @@ class Category
     public function addCategory($name, $farbe) {
         $sql = "INSERT INTO `kategorie` (`name`, `farbe`) VALUES('" . $name . "','" . $farbe . "')"; //SQL Statement
         $GLOBALS["db"]->insert($sql);
-        echo "Neue Category wurde in der Database eingetragen.<br/>";
+        echo "Neue Category " . $name . " wurde in der Database eingetragen.<br/>";
     }
         
     /**
