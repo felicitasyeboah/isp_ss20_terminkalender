@@ -52,8 +52,8 @@ if (isset($_GET["id"])) {
     $ort = isset($_POST["ort"]) ? $_POST["ort"] : "";
     $ganztag = "";
     $kategorie = $db->getAllKategorien(); // Laedt alle vorhanden Kategorien
-    $katVal = "";
-    $katColor = "#ffffff";
+    $katVal = isset($_POST["kategorie"]) ? $_POST["kategorie"] : "";
+    $katColor = isset($_POST["farbe"]) ? $_POST["farbe"] : "#ffffff";
     $tempid = "";
     $group = "";
 }
@@ -97,9 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $tmpkat = $_POST['kategorie'];
 
     // Formular auf sinnvolle/korrekte Eingaben ueberpruefen
+
     $regexTitel = '/^[a-zA-ZüöäÜÖÄß0-9\s\-,.\/\:!\?"]+$/i'; // nur Buchstaben und Zahlen und - , . : ! ? /
     $regexOrt = '/^[a-zA-ZüöäÜÖÄß\s\-]+$/i'; // nur Buchstaben und -
     $regexKategorie = '/^[a-zA-ZüöäÜÖÄß0-9\s\-]+$/i'; // nur Buchstaben, Zahlen und -
+
     if (empty($titel)) {
         $ausgabe = '<p style="color:#ff0000;">Fehler bei Titel: Bitte einen Titel eingeben.</p>' . $formular;
     } elseif (!preg_match($regexTitel, $_POST['titel'])) {
@@ -113,10 +115,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $ausgabe = '<p style="color:#ff0000;">Kategorie darf nur Buchstaben, Zahlen und "-" enthalten.</p>' . $formular;
     }
     elseif($_POST['anfangsdatum'] > $_POST['enddatum']) {
-        $ausgabe = '<p style="color:#ff0000;">Fehler: Enddatum muss nach dem Anfangsdatum liegen.</p>' . $formular;
+        $ausgabe = '<p style="color:#ff0000;">Fehler: Enddatum darf nicht vor Anfangsdatum liegen.</p>' . $formular;
     }
     elseif($_POST['anfangsdatum'] == $_POST['enddatum'] && $_POST['anfangszeit'] > $_POST['endzeit']) {
-        $ausgabe = '<p style="color:#ff0000;">Fehler: Endzeit muss nach dem Anfangszeit liegen.</p>' . $formular;
+        $ausgabe = '<p style="color:#ff0000;">Fehler: Endzeit darf nicht nach Anfangszeit liegen.</p>' . $formular;
     }
     // Wenn Eingaben in Ordnung
     else {
@@ -159,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $termin->updateEvent();
                 echo $termin->getTitel(). " wurde in Datenbank geaendert.<br/>";
                 } else {
-                  // sonst
+                  // sonst fuege neuen Gruppentermin ein
                     $termin->addEvent();
                   }
             }
@@ -182,7 +184,7 @@ include "inc/footer.inc.php";
 
 <!-- Java Scripte -->
 <script>
-    // setzt vor einstelligen Ziffer eine fuehrende 0 voran
+    // setzt vor einstelligen Ziffern eine fuehrende 0 voran
     function fuehrendeNull(zahl) {
         zahl = (zahl < 10 ? '0' : '') + zahl;
         return zahl;
@@ -194,9 +196,6 @@ include "inc/footer.inc.php";
         var inEinerStunde = new Date();
         var ganztag = new Date();
 
-        //Aktuelles Datum
-        var datum = jetzt.getFullYear() + "-" + fuehrendeNull(jetzt.getMonth() + 1) + "-" + fuehrendeNull(jetzt.getDate());
-
         //aktuelle Zeit
         var uhrzeit = fuehrendeNull(jetzt.getHours()) + ":" + fuehrendeNull(jetzt.getMinutes());
 
@@ -204,7 +203,7 @@ include "inc/footer.inc.php";
         inEinerStunde.setHours(inEinerStunde.getHours() + 1)
         var uhrzeitPlus = fuehrendeNull(inEinerStunde.getHours()) + ":" + fuehrendeNull(inEinerStunde.getMinutes());
 
-        // Setz ganztag event
+        // Setzt Ganztag-Event
         ganztag.setHours(23)
         ganztag.setMinutes(59)
         var timeGanztag = fuehrendeNull(ganztag.getHours()) + ":" + fuehrendeNull(ganztag.getMinutes())
@@ -216,8 +215,7 @@ include "inc/footer.inc.php";
         } else {
             document.getElementById("anfangszeit").setAttribute("value", uhrzeit);
             document.getElementById("endzeit").setAttribute("value", uhrzeitPlus);
-            document.getElementById("anfangsdatum").setAttribute("value", datum);
-            document.getElementById("enddatum").setAttribute("value", datum);
+
         }
     }
 

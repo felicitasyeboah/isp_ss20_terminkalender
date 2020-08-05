@@ -4,7 +4,7 @@ include "Database.php"; // Einbinden der Database.php
 
 /**
  * Die Klasse Kalender erstellt ein Kalender-Objekt. Sie enthaelt Funktionen zur Oberfläche des Kalenders wie z.b.
- * die Wochen- und Monatsansicht, sowie die Navigationsbar für die Filter und zum hinzufuegen eines neuen Termins.
+ * die Wochen- und Monatsansicht, sowie die Navigationsbar für die Filter und zum Hinzufuegen eines neuen Termins.
  *
  */
 class Kalender
@@ -107,9 +107,9 @@ class Kalender
     {
         $ausgabe = '<table id="views">';
         $ausgabe .= '<caption><div class="infobar eventLink ico_back" onclick="window.location.replace(\'index.php?m=' .
-            ($this->monat - 1) . '&j=' . $this->jahr . '&kat=' . $this->katFilter . '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] .
+            ($this->monat - 1) . '&j=' . $this->jahr .  '\')"></div><div id="zeitinfo">&nbsp;' . $this->infoDatum['month'] .
             ' ' . $this->jahr . '&nbsp;</div><div class="infobar eventLink ico_for" onclick="window.location.replace(\'index.php?m=' .
-            ($this->monat + 1) . '&j=' . $this->jahr . '&kat=' . $this->katFilter . '\')"></div>';
+            ($this->monat + 1) . '&j=' . $this->jahr .'\')"></div>';
 
         // Navigation (Filter, Ansichten)
         $ausgabe .= $this->addNavBar();
